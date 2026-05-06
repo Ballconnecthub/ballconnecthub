@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Football Video - Ballconnecthub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .navbar {
+            background: #0A66C2;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .brand {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 14px;
+            border-radius: 8px;
+        }
+
+        .page-wrap {
+            width: 1000px;
+            max-width: 95%;
+            margin: 35px auto;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 25px;
+        }
+
+        .upload-card,
+        .tips-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+            padding: 28px;
+        }
+
+        .upload-title {
+            color: #0A66C2;
+            font-size: 30px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .upload-subtitle {
+            color: #555;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .upload-box {
+            border: 2px dashed #0A66C2;
+            border-radius: 18px;
+            background: #f8fbff;
+            padding: 40px 25px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .upload-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+        }
+
+        .upload-box h3 {
+            color: #0A66C2;
+            margin-bottom: 10px;
+        }
+
+        .upload-box p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            background: white;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1F2937;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #ccc;
+            font-size: 15px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .upload-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #0A66C2, #16A34A);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.95;
+        }
+
+        .tips-title {
+            color: #0A66C2;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .tip-item {
+            background: #f0f6ff;
+            border-left: 5px solid #0A66C2;
+            padding: 14px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .tip-item strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #0A66C2;
+        }
+
+        .video-preview,
+        .thumbnail-preview {
+            width: 100%;
+            margin-top: 20px;
+            border-radius: 12px;
+            display: none;
+            background: black;
+            max-height: 420px;
+            object-fit: cover;
+        }
+
+        .category-badge {
+            display: inline-block;
+            background: #e8f2ff;
+            color: #0A66C2;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            margin: 4px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 900px) {
+            .page-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-card,
+            .tips-card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div>
+        <a href="/">⚽ Ballconnecthub</a>
+    </div>
+
+    <div>
+        <a href="/">Home</a>
+    </div>
+</div>
+
+<div class="page-wrap">
+
+    <div class="upload-card">
+
+        <h1 class="upload-title">
+            Upload Football Video
+        </h1>
+
+        <p class="upload-subtitle">
+            Share your football talent with scouts, clubs, coaches, and fans around the world.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="upload-box">
+
+                <div class="upload-icon">🎥</div>
+
+                <h3>Upload Your Football Highlight</h3>
+
+                <p>
+                    Supports horizontal and vertical videos.
+                    Maximum video duration: 3 minutes.
+                </p>
+
+                <label>Football Video</label>
+
+                <input
+                    type="file"
+                    name="video_file"
+                    accept="video/*"
+                    class="file-input"
+                    id="videoInput"
+                    required
+                >
+
+                <video id="videoPreview" class="video-preview" controls></video>
+
+            </div>
+
+            <div class="form-group">
+
+                <label>Video Thumbnail</label>
+
+                <input
+                    type="file"
+                    name="thumbnail"
+                    accept="image/*"
+                    class="file-input"
+                    id="thumbnailInput"
+                >
+
+                <img
+                    id="thumbnailPreview"
+                    class="thumbnail-preview"
+                >
+
+            </div>
+
+            <div class="form-group">
+                <label>Video Title</label>
+
+                <input
+                    type="text"
+                    name="title"
+                    placeholder="Example: Amazing Dribbling Skills"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+
+                <textarea
+                    name="description"
+                    placeholder="Describe your football skills, match performance, goals, assists, academy, or achievements..."
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Football Category</label>
+
+                <select name="category" required>
+                    <option value="">Select category</option>
+                    <option value="dribbling">Dribbling</option>
+                    <option value="shooting">Shooting</option>
+                    <option value="passing">Passing</option>
+                    <option value="goals">Goals</option>
+                    <option value="goalkeeper">Goalkeeper Saves</option>
+                    <option value="freestyle">Freestyle</option>
+                    <option value="training">Training Drills</option>
+                    <option value="match">Match Highlights</option>
+                </select>
+            </div>
+
+            <button type="submit" class="upload-btn">
+                ⚽ Upload Football Video
+            </button>
+
+        </form>
+    </div>
+
+    <div class="tips-card">
+
+        <h2 class="tips-title">
+            🚀 Tips To Get More Scout Attention
+        </h2>
+
+        <div class="tip-item">
+            <strong>Use Good Lighting</strong>
+            Clear daylight videos perform better.
+        </div>
+
+        <div class="tip-item">
+            <strong>Show Your Best Skills Early</strong>
+            Scouts often decide within seconds.
+        </div>
+
+        <div class="tip-item">
+            <strong>Use Multiple Angles</strong>
+            Match footage + close control clips work best.
+        </div>
+
+        <div class="tip-item">
+            <strong>Popular Categories</strong>
+
+            <div style="margin-top:10px;">
+                <span class="category-badge">Goals</span>
+                <span class="category-badge">Dribbling</span>
+                <span class="category-badge">Match Highlights</span>
+                <span class="category-badge">Freestyle</span>
+            </div>
+        </div>
+
+        <div class="tip-item">
+            <strong>Keep Videos Short</strong>
+            30–90 second highlights usually perform best.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+
+const videoInput = document.getElementById("videoInput");
+const videoPreview = document.getElementById("videoPreview");
+
+videoInput.addEventListener("change", function(event) {
+
+    const file = event.target.files[0];
+
+    if (file) {
+
+        const url = URL.createObjectURL(file);
+
+        videoPreview.src = url;
+        videoPreview.style.display = "block";
+    }
+});
+
+const thumbnailInput = document.getElementById("thumbnailInput");
+const thumbnailPreview = document.getElementById("thumbnailPreview");
+
+thumbnailInput.addEventListener("change", function(event){
+
+    const file = event.target.files[0];
+
+    if(file){
+
+        const url = URL.createObjectURL(file);
+
+        thumbnailPreview.src = url;
+        thumbnailPreview.style.display = "block";
+    }
+
+});
+
+</script>
+
+<footer style="
+    background:#0A66C2;
+    color:white;
+    padding:25px;
+    text-align:center;
+    margin-top:40px;
+">
+    <p style="font-weight:bold; margin-bottom:10px;">
+        ⚽ Ballconnecthub
+    </p>
+
+    <p style="font-size:14px; line-height:1.6;">
+        Football talent discovery platform for players, scouts, coaches, clubs, and fans.
+    </p>
+
+    <div style="margin-top:15px;">
+        <a href="/impressum/" style="color:white; margin:0 10px;">Legal Notice</a>
+
+        <a href="/privacy/" style="color:white; margin:0 10px;">
+            Privacy Policy
+        </a>
+
+        <a href="/terms/" style="color:white; margin:0 10px;">
+            Terms & Conditions
+        </a>
+
+        <a href="/copyright/" style="color:white; margin:0 10px;">
+            Copyright
+        </a>
+
+        <a href="/cookies/" style="color:white; margin:0 10px;">
+            Cookie Settings
+        </a>
+    </div>
+
+    <p style="font-size:13px; margin-top:18px;">
+        © 2026 Ballconnecthub. All rights reserved.
+        Users are responsible for uploaded content and must own the rights
+        to videos, images, music, and text uploaded to the platform.
+    </p>
+</footer>
+
+</body>
+</html>

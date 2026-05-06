@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ profile_user.username }} - Ballconnecthub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #0A66C2;
+            padding: 15px 25px;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 14px;
+            border-radius: 6px;
+        }
+
+        .container {
+            width: 850px;
+            max-width: 95%;
+            margin: 30px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-header h1 {
+            color: #0A66C2;
+            margin-bottom: 5px;
+        }
+
+        .account-type {
+            color: #16A34A;
+            font-weight: bold;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: #0A66C2;
+            border-bottom: 2px solid #0A66C2;
+            padding-bottom: 5px;
+        }
+
+        .info {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: #f0f4fa;
+            padding: 15px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .stat-box h2 {
+            color: #0A66C2;
+            margin: 0;
+        }
+
+        .btn {
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .contact-btn {
+            background: #16A34A;
+        }
+
+        .edit-btn {
+            background: #0A66C2;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+        }
+
+        .top-action-btn {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .edit-action {
+            background: #0A66C2;
+        }
+
+        .upload-action {
+            background: #16A34A;
+        }
+
+        .admin-action {
+            background: #7c3aed;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .verified-scout {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .verified-club {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .not-verified {
+            display: inline-block;
+            background: #f3f4f6;
+            color: #666;
+            padding: 8px 14px;
+            border-radius: 30px;
+            margin-top: 10px;
+        }
+
+        .video-box {
+            background: #f9fafc;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            color: #555;
+            margin-bottom: 20px;
+            scroll-margin-top: 90px;
+        }
+
+        .video-layout {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .video-main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .video-player-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f9fafc;
+            padding: 6px 10px;
+        }
+
+        .football-video {
+            max-height: 520px;
+            max-width: 100%;
+            width: auto;
+            border-radius: 10px;
+            background: transparent;
+            margin-bottom: 2px;
+        }
+
+        .video-actions-side {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: stretch;
+            position: sticky;
+            top: 90px;
+        }
+
+        .video-stats {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .comments-box {
+            margin-top: 20px;
+        }
+
+        .comment-card {
+            background: #f0f4fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        footer {
+            background:#0A66C2;
+            color:white;
+            padding:25px;
+            text-align:center;
+            margin-top:40px;
+        }
+
+        footer a {
+            color:white;
+            margin:0 10px;
+            text-decoration:none;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .video-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .video-actions-side {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                position: static;
+            }
+
+            .video-actions-side a,
+            .video-actions-side form {
+                width: 45%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div>
+        <a href="/">⚽ Ballconnecthub</a>
+    </div>
+
+    <div>
+        <a href="/">Home</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="profile-header">
+
+        {% if profile.profile_photo %}
+            <img src="{{ profile.profile_photo.url }}" style="width:140px; height:140px; border-radius:50%; object-fit:cover; border:4px solid #0A66C2; margin-bottom:15px;">
+        {% else %}
+            <div style="width:140px; height:140px; border-radius:50%; background:#ddd; margin:0 auto 15px auto; display:flex; align-items:center; justify-content:center; font-size:50px;">
+                ⚽
+            </div>
+        {% endif %}
+
+        <h1>
+            {{ profile_user.username }}
+            {% include "verified_badge.html" with profile_obj=profile %}
+        </h1>
+
+        {% if profile_user.is_staff %}
+            <div class="account-type">
+                Administrator
+            </div>
+        {% else %}
+            <div class="account-type">
+                {{ profile.account_type|title }}
+            </div>
+        {% endif %}
+
+        {% if user.is_authenticated and user != profile_user and not profile_user.is_staff %}
+            <form method="POST" action="/follow/{{ profile_user.username }}/">
+                {% csrf_token %}
+
+                {% if user in profile.fans.all %}
+                    <button class="btn delete-btn" type="submit">
+                        Unfollow
+                    </button>
+                {% else %}
+                    <button class="btn contact-btn" type="submit">
+                        Follow
+                    </button>
+                {% endif %}
+            </form>
+        {% endif %}
+
+        {% if user == profile_user and not profile_user.is_staff %}
+            <br>
+
+            <a href="/edit-profile/" class="top-action-btn edit-action">
+                Edit Profile
+            </a>
+
+            <a href="/upload-video/" class="top-action-btn upload-action">
+                Upload Video
+            </a>
+        {% endif %}
+
+    </div>
+
+    {% if profile_user.is_staff %}
+
+        <div class="section">
+            <h3>Administrator Information</h3>
+
+            <p class="info">
+    <strong>Role:</strong>
+    {{ profile.admin_role }}
+</p>
+
+<p class="info">
+    <strong>Access Level:</strong>
+    {{ profile.admin_access_level }}
+</p>
+
+<p class="info">
+    <strong>Permissions:</strong>
+    {{ profile.admin_permissions }}
+</p>
+
+            <div class="admin-badge">
+                🛡️ Official Ballconnecthub Administrator
+            </div>
+        </div>
+
+        <div class="section">
+            <h3>Admin Dashboard</h3>
+
+            <a href="/moderation/" class="top-action-btn edit-action">
+                Open Moderation Dashboard
+            </a>
+
+            <a href="/admin/" class="top-action-btn upload-action">
+                Open Django Admin
+            </a>
+
+            <a href="/" class="top-action-btn admin-action">
+                Back to Platform
+            </a>
+        </div>
+
+    {% else %}
+
+        {% if profile.account_type == "player" %}
+
+            <div class="section">
+                <h3>Player Information</h3>
+
+                <p class="info"><strong>Age:</strong> {{ profile.age }}</p>
+                <p class="info"><strong>Country:</strong> {{ profile.country }}</p>
+                <p class="info"><strong>Position:</strong> {{ profile.position|title }}</p>
+                <p class="info"><strong>Club / Academy:</strong> {{ profile.club_or_academy }}</p>
+                <p class="info"><strong>Height:</strong> {{ profile.height }}</p>
+                <p class="info"><strong>Strong Foot:</strong> {{ profile.strong_foot|title }}</p>
+            </div>
+
+            <div class="section">
+                <h3>Football CV</h3>
+                <p>{{ profile.football_cv }}</p>
+            </div>
+
+        {% elif profile.account_type == "scout" %}
+
+            <div class="section">
+                <h3>Scout Information</h3>
+
+                <p class="info"><strong>Country:</strong> {{ profile.country }}</p>
+                <p class="info"><strong>Organization / Club:</strong> {{ profile.scout_organization }}</p>
+                <p class="info"><strong>Scouting Region:</strong> {{ profile.scout_region }}</p>
+                <p class="info"><strong>Experience:</strong> {{ profile.scout_experience }} years</p>
+
+                {% if profile.verified_scout %}
+                    <div class="verified-scout">
+                        ✅ Verified Scout
+                    </div>
+                {% else %}
+                    <div class="not-verified">
+                        Scout Not Verified
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="section">
+                <h3>Scout Bio</h3>
+                <p>{{ profile.scout_bio }}</p>
+            </div>
+
+        {% elif profile.account_type == "coach" %}
+
+            <div class="section">
+                <h3>Coach / Club Information</h3>
+
+                <p class="info"><strong>Country:</strong> {{ profile.country }}</p>
+                <p class="info"><strong>Club Name:</strong> {{ profile.club_name }}</p>
+                <p class="info"><strong>League:</strong> {{ profile.club_league }}</p>
+                <p class="info"><strong>Academy Name:</strong> {{ profile.academy_name }}</p>
+                <p class="info"><strong>Founded Year:</strong> {{ profile.founded_year }}</p>
+
+                {% if profile.verified_club %}
+                    <div class="verified-club">
+                        🏆 Verified Club
+                    </div>
+                {% else %}
+                    <div class="not-verified">
+                        Club Not Verified
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="section">
+                <h3>Club Bio</h3>
+                <p>{{ profile.club_bio }}</p>
+            </div>
+
+        {% else %}
+
+            <div class="section">
+                <h3>Fan Information</h3>
+
+                <p class="info"><strong>Country:</strong> {{ profile.country }}</p>
+                <p>This fan follows football talent on Ballconnecthub.</p>
+            </div>
+
+        {% endif %}
+
+        <div class="section">
+
+            {% if profile.account_type == "player" %}
+
+                <h3>Player Statistics</h3>
+
+                <div class="stats">
+                    <div class="stat-box">
+                        <h2>{{ profile.fans.count }}</h2>
+                        <p>Followers / Fans</p>
+                    </div>
+
+                    <div class="stat-box">
+                        <h2>{{ total_likes }}</h2>
+                        <p>Total Likes</p>
+                    </div>
+
+                    <div class="stat-box">
+                        <h2>{{ total_views }}</h2>
+                        <p>Total Views</p>
+                    </div>
+                </div>
+
+            {% elif profile.account_type == "scout" %}
+
+                <h3>Scout Statistics</h3>
+
+                <div class="stats">
+                    <div class="stat-box">
+                        <h2>{{ scout_interests_count }}</h2>
+                        <p>Scout Interests</p>
+                    </div>
+
+                    <div class="stat-box">
+                        <h2>{{ saved_videos_count }}</h2>
+                        <p>Saved Targets</p>
+                    </div>
+
+                    <div class="stat-box">
+                        <h2>{{ shared_videos_count }}</h2>
+                        <p>Shared Videos</p>
+                    </div>
+                </div>
+
+            {% elif profile.account_type == "coach" %}
+
+                <h3>Coach / Club Statistics</h3>
+
+                <div class="stats">
+                    <div class="stat-box">
+                        <h2>{{ scout_interests_count }}</h2>
+                        <p>Player Interests</p>
+                    </div>
+
+                    <div class="stat-box">
+                        <h2>{{ saved_videos_count }}</h2>
+                        <p>Saved Players</p>
+                    </div>
+
+                    <div class="stat-box">
+                        <h2>{{ shared_videos_count }}</h2>
+                        <p>Club Video Shares</p>
+                    </div>
+                </div>
+
+            {% else %}
+
+                <h3>Fan Statistics</h3>
+
+                <div class="stats">
+                    <div class="stat-box">
+                        <h2>{{ saved_videos_count }}</h2>
+                        <p>Saved Videos</p>
+                    </div>
+
+                    <div class="stat-box">
+                        <h2>{{ total_likes }}</h2>
+                        <p>Liked Videos</p>
+                    </div>
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="section">
+
+            {% if profile.account_type == "player" %}
+                <h3>Contact Player</h3>
+            {% elif profile.account_type == "scout" %}
+                <h3>Contact Scout</h3>
+            {% elif profile.account_type == "coach" %}
+                <h3>Contact Coach / Club</h3>
+            {% else %}
+                <h3>Contact User</h3>
+            {% endif %}
+
+            {% if profile_user.email %}
+                <a href="mailto:{{ profile_user.email }}">
+                    <button class="btn contact-btn" style="width:auto;">
+                        Contact {{ profile_user.username }}
+                    </button>
+                </a>
+            {% else %}
+                <a href="mailto:info@ballconnecthub.com">
+                    <button class="btn contact-btn" style="width:auto;">
+                        Contact Ballconnecthub
+                    </button>
+                </a>
+            {% endif %}
+
+            {% if user == profile_user %}
+                <br><br>
+
+                <a href="/delete-account/">
+                    <button class="btn delete-btn" style="width:auto;">
+                        Delete My Account
+                    </button>
+                </a>
+            {% endif %}
+
+        </div>
+
+        <div class="section">
+            <h3>Football Videos</h3>
+
+            {% if videos %}
+                {% for video in videos %}
+
+                    <div class="video-box" id="video-{{ video.id }}">
+
+                        <h4>{{ video.title }}</h4>
+                        <p>{{ video.description }}</p>
+                        <p><strong>Category:</strong> {{ video.category|title }}</p>
+
+                        <div class="video-layout">
+
+                            <div class="video-main">
+                                <div class="video-player-wrap">
+                                    <video
+                                        class="football-video preview-video"
+                                        controls
+                                        muted
+                                        preload="metadata"
+                                        poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
+                                        controlsList="nodownload"
+                                        disablePictureInPicture
+                                        oncontextmenu="return false;"
+                                    >
+                                        <source src="{{ video.video_file.url }}">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </div>
+                            </div>
+
+                            <div class="video-actions-side">
+
+                                <div class="video-stats">
+                                    👀 {{ video.views }} views<br>
+                                    ❤️ {{ video.likes.count }} likes<br>
+                                    🔖 {{ video.saves.count }} saves<br>
+                                    📤 {{ video.shares }} shares<br>
+                                    🕵️ {{ video.scout_interests.count }} scout interest<br>
+                                    🔥 Score: {{ video.ranking_score_value }}
+                                </div>
+
+                                <a href="#video-{{ video.id }}">
+                                    <button class="btn edit-btn">
+                                        Watch
+                                    </button>
+                                </a>
+
+                                {% if user == video.player %}
+
+                                    <a href="/edit-video/{{ video.id }}/">
+                                        <button class="btn edit-btn">
+                                            Edit
+                                        </button>
+                                    </a>
+
+                                    <a href="/delete-video/{{ video.id }}/">
+                                        <button class="btn delete-btn">
+                                            Delete
+                                        </button>
+                                    </a>
+
+                                {% endif %}
+
+                                {% if user.is_authenticated %}
+                                    <form method="POST" action="/like-video/{{ video.id }}/#video-{{ video.id }}">
+                                        {% csrf_token %}
+
+                                        {% if user in video.likes.all %}
+                                            <button class="btn delete-btn" type="submit">
+                                                Unlike
+                                            </button>
+                                        {% else %}
+                                            <button class="btn contact-btn" type="submit">
+                                                Like
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% else %}
+                                    <a href="/login/">
+                                        <button class="btn edit-btn">
+                                            Login to Like
+                                        </button>
+                                    </a>
+                                {% endif %}
+
+                                {% if user.is_authenticated %}
+                                    <form method="POST" action="/save-video/{{ video.id }}/#video-{{ video.id }}">
+                                        {% csrf_token %}
+
+                                        {% if user in video.saves.all %}
+                                            <button class="btn delete-btn" type="submit">
+                                                Unsave
+                                            </button>
+                                        {% else %}
+                                            <button class="btn edit-btn" type="submit">
+                                                Save
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                {% else %}
+                                    <a href="/login/">
+                                        <button class="btn edit-btn">
+                                            Login to Save
+                                        </button>
+                                    </a>
+                                {% endif %}
+
+                                <a href="/share-video/{{ video.id }}/">
+                                    <button class="btn edit-btn">
+                                        Share
+                                    </button>
+                                </a>
+
+                                <a href="/report-video/{{ video.id }}/">
+                                   <button class="btn delete-btn">
+                                         Report
+                                   </button>
+                                   </a>
+
+                                {% if user.is_authenticated %}
+                                    {% if user.profile.account_type == "scout" or user.profile.account_type == "coach" %}
+                                        <form method="POST" action="/scout-interest/{{ video.id }}/#video-{{ video.id }}">
+                                            {% csrf_token %}
+
+                                            <button class="btn edit-btn" type="submit">
+                                                Scout Interest
+                                            </button>
+                                        </form>
+                                    {% endif %}
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        <div class="comments-box">
+                            <hr>
+
+                            <h4>Comments</h4>
+
+                            {% if user.is_authenticated %}
+                                <form method="POST" action="/comment-video/{{ video.id }}/#video-{{ video.id }}">
+                                    {% csrf_token %}
+
+                                    <textarea
+                                        name="text"
+                                        rows="2"
+                                        placeholder="Write a comment..."
+                                        style="width:100%; padding:10px;"
+                                    ></textarea>
+
+                                    <button class="btn contact-btn" type="submit" style="width:auto;">
+                                        Comment
+                                    </button>
+                                </form>
+                            {% else %}
+                                <p>
+                                    <a href="/login/">Login to comment</a>
+                                </p>
+                            {% endif %}
+
+                            {% for comment in video.comments.all %}
+                                <div class="comment-card">
+                                    <strong>{{ comment.user.username }}</strong><br>
+                                    {{ comment.text }}<br>
+                                    <small>{{ comment.created_at }}</small>
+                                </div>
+                            {% empty %}
+                                <p>No comments yet.</p>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+            {% else %}
+                <div class="video-box">
+                    No videos uploaded yet.
+                </div>
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+<footer>
+    <p style="font-weight:bold; margin-bottom:10px;">
+        ⚽ Ballconnecthub
+    </p>
+
+    <p style="font-size:14px; line-height:1.6;">
+        Football talent discovery platform for players, scouts, coaches, clubs, and fans.
+    </p>
+
+    <div style="margin-top:15px;">
+        <a href="/impressum/">Legal Notice</a>
+        <a href="/privacy/">Privacy Policy</a>
+        <a href="/terms/">Terms & Conditions</a>
+        <a href="/copyright/">Copyright</a>
+        <a href="/cookies/">Cookie Settings</a>
+    </div>
+
+    <p style="font-size:13px; margin-top:18px;">
+        © 2026 Ballconnecthub. All rights reserved.
+        Users are responsible for uploaded content and must own the rights
+        to videos, images, music, and text uploaded to the platform.
+    </p>
+</footer>
+
+</body>
+</html>

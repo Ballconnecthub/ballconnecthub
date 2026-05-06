@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ article.title }} - Ballconnecthub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        .navbar {
+            background: #0A66C2;
+            padding: 15px 25px;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .article-box {
+            width: 850px;
+            max-width: 94%;
+            margin: 35px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .category {
+            display: inline-block;
+            background: #16A34A;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        h1 {
+            color: #0A66C2;
+            margin-top: 15px;
+        }
+
+        .content {
+            color: #333;
+            font-size: 17px;
+            line-height: 1.8;
+            white-space: pre-line;
+        }
+
+        .back-btn {
+            display: inline-block;
+            margin-top: 25px;
+            background: #0A66C2;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <a href="/">⚽ Ballconnecthub</a>
+    <a href="/football-news/">Football News</a>
+</div>
+
+<div class="article-box">
+
+    <div class="category">
+        {{ article.category }}
+    </div>
+
+    <h1>{{ article.title }}</h1>
+
+    <div class="content">
+        {{ article.content }}
+    </div>
+
+    <a class="back-btn" href="/football-news/">
+        Back to Football News
+    </a>
+
+</div>
+
+</body>
+</html>

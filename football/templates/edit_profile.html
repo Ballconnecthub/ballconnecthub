@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Profile - Ballconnecthub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial,sans-serif;
+            background:linear-gradient(135deg,#0A66C2,#16A34A);
+        }
+
+        .navbar{
+            background:white;
+            padding:15px 30px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+        }
+
+        .brand{
+            color:#0A66C2;
+            font-size:22px;
+            font-weight:bold;
+            text-decoration:none;
+        }
+
+        .navbar a{
+            color:#0A66C2;
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        .container{
+            width:520px;
+            max-width:92%;
+            margin:30px auto;
+            background:white;
+            padding:25px;
+            border-radius:14px;
+            box-shadow:0px 8px 30px rgba(0,0,0,0.2);
+        }
+
+        h2{
+            text-align:center;
+            color:#0A66C2;
+        }
+
+        .account-badge{
+            text-align:center;
+            color:#16A34A;
+            font-weight:bold;
+            margin-bottom:20px;
+        }
+
+        .section-title{
+            margin-top:20px;
+            color:#0A66C2;
+            border-bottom:2px solid #0A66C2;
+            padding-bottom:5px;
+        }
+
+        label{
+            font-weight:bold;
+            color:#1F2937;
+        }
+
+        input,
+        select,
+        textarea{
+            width:100%;
+            padding:10px;
+            margin-top:5px;
+            margin-bottom:14px;
+            border-radius:8px;
+            border:1px solid #ccc;
+            box-sizing:border-box;
+        }
+
+        textarea{
+            resize:vertical;
+        }
+
+        button{
+            width:100%;
+            padding:13px;
+            background:#0A66C2;
+            color:white;
+            border:none;
+            border-radius:8px;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background:#084a9e;
+        }
+
+        .cancel{
+            text-align:center;
+            margin-top:15px;
+        }
+
+        .cancel a{
+            color:#0A66C2;
+            font-weight:bold;
+            text-decoration:none;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <a href="/" class="brand">
+        ⚽ Ballconnecthub
+    </a>
+
+    <a href="/profile/{{ user.username }}/">
+        Back to Profile
+    </a>
+
+</div>
+
+<div class="container">
+
+    <h2>Edit Profile</h2>
+
+    <div class="account-badge">
+        Account Type: {{ profile.account_type|title }}
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <h3 class="section-title">Basic Information</h3>
+
+        <label>Username</label>
+        <input
+            type="text"
+            name="username"
+            value="{{ user.username }}"
+        >
+
+        <label>Country</label>
+        <input
+            type="text"
+            name="country"
+            value="{{ profile.country }}"
+        >
+
+        <label>Profile Photo</label>
+        <input
+            type="file"
+            name="profile_photo"
+        >
+
+        {% if profile.account_type == "player" %}
+
+            <h3 class="section-title">Player Information</h3>
+
+            <label>Age</label>
+            <input
+                type="number"
+                name="age"
+                value="{{ profile.age }}"
+            >
+
+            <label>Position</label>
+
+            <select name="position">
+
+                <option value="">
+                    Select position
+                </option>
+
+                <option value="goalkeeper"
+                    {% if profile.position == "goalkeeper" %}
+                        selected
+                    {% endif %}
+                >
+                    Goalkeeper
+                </option>
+
+                <option value="defender"
+                    {% if profile.position == "defender" %}
+                        selected
+                    {% endif %}
+                >
+                    Defender
+                </option>
+
+                <option value="midfielder"
+                    {% if profile.position == "midfielder" %}
+                        selected
+                    {% endif %}
+                >
+                    Midfielder
+                </option>
+
+                <option value="forward"
+                    {% if profile.position == "forward" %}
+                        selected
+                    {% endif %}
+                >
+                    Forward
+                </option>
+
+            </select>
+
+            <label>Club / Academy</label>
+            <input
+                type="text"
+                name="club"
+                value="{{ profile.club_or_academy }}"
+            >
+
+            <label>Height</label>
+            <input
+                type="text"
+                name="height"
+                value="{{ profile.height }}"
+            >
+
+            <label>Strong Foot</label>
+
+            <select name="strong_foot">
+
+                <option value="">
+                    Select strong foot
+                </option>
+
+                <option value="right"
+                    {% if profile.strong_foot == "right" %}
+                        selected
+                    {% endif %}
+                >
+                    Right
+                </option>
+
+                <option value="left"
+                    {% if profile.strong_foot == "left" %}
+                        selected
+                    {% endif %}
+                >
+                    Left
+                </option>
+
+                <option value="both"
+                    {% if profile.strong_foot == "both" %}
+                        selected
+                    {% endif %}
+                >
+                    Both
+                </option>
+
+            </select>
+
+            <label>Football CV</label>
+
+            <textarea
+                name="football_cv"
+                rows="5"
+            >{{ profile.football_cv }}</textarea>
+
+        {% elif profile.account_type == "scout" %}
+
+            <h3 class="section-title">
+                Scout Information
+            </h3>
+
+            <label>Organization / Club</label>
+
+            <input
+                type="text"
+                name="scout_organization"
+                value="{{ profile.scout_organization }}"
+            >
+
+            <label>Scouting Region</label>
+
+            <input
+                type="text"
+                name="scout_region"
+                value="{{ profile.scout_region }}"
+            >
+
+            <label>Experience Years</label>
+
+            <input
+                type="number"
+                name="scout_experience"
+                value="{{ profile.scout_experience }}"
+            >
+
+            <label>Scout Bio</label>
+
+            <textarea
+                name="scout_bio"
+                rows="5"
+            >{{ profile.scout_bio }}</textarea>
+
+        {% elif profile.account_type == "coach" %}
+
+            <h3 class="section-title">
+                Coach / Club Information
+            </h3>
+
+            <label>Club Name</label>
+
+            <input
+                type="text"
+                name="club_name"
+                value="{{ profile.club_name }}"
+            >
+
+            <label>Club League</label>
+
+            <input
+                type="text"
+                name="club_league"
+                value="{{ profile.club_league }}"
+            >
+
+            <label>Academy Name</label>
+
+            <input
+                type="text"
+                name="academy_name"
+                value="{{ profile.academy_name }}"
+            >
+
+            <label>Founded Year</label>
+
+            <input
+                type="number"
+                name="founded_year"
+                value="{{ profile.founded_year }}"
+            >
+
+            <label>Club Bio</label>
+
+            <textarea
+                name="club_bio"
+                rows="5"
+            >{{ profile.club_bio }}</textarea>
+
+        {% else %}
+
+            <h3 class="section-title">
+                Fan Information
+            </h3>
+
+            <p>
+                Fan accounts can follow players,
+                like videos,
+                save videos,
+                and comment on football talent.
+            </p>
+
+        {% endif %}
+
+        <button type="submit">
+            Save Changes
+        </button>
+
+    </form>
+
+    <div class="cancel">
+
+        <a href="/profile/{{ user.username }}/">
+            Cancel
+        </a>
+
+    </div>
+
+</div>
+<footer style="
+    background:#0A66C2;
+    color:white;
+    padding:25px;
+    text-align:center;
+    margin-top:40px;
+">
+    <p style="font-weight:bold; margin-bottom:10px;">
+        ⚽ Ballconnecthub
+    </p>
+
+    <p style="font-size:14px; line-height:1.6;">
+        Football talent discovery platform for players, scouts, coaches, clubs, and fans.
+    </p>
+
+    <div style="margin-top:15px;">
+        <a href="/impressum/" style="color:white; margin:0 10px;">Legal Notice</a>
+
+        <a href="/privacy/" style="color:white; margin:0 10px;">
+            Privacy Policy
+        </a>
+
+        <a href="/terms/" style="color:white; margin:0 10px;">
+            Terms & Conditions
+        </a>
+
+        <a href="/copyright/" style="color:white; margin:0 10px;">
+            Copyright
+        </a>
+
+        <a href="/cookies/" style="color:white; margin:0 10px;">
+            Cookie Settings
+        </a>
+    </div>
+
+    <p style="font-size:13px; margin-top:18px;">
+        © 2026 Ballconnecthub. All rights reserved.
+        Users are responsible for uploaded content and must own the rights
+        to videos, images, music, and text uploaded to the platform.
+    </p>
+</footer>
+</body>
+</html>

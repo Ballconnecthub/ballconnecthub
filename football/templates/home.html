@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ballconnecthub - Football Talent Feed</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+        }
+
+        video {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .navbar {
+            background: #0A66C2;
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 1200px;
+            max-width: 96%;
+            margin: 18px auto;
+        }
+
+        .hero {
+            background: white;
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .hero h1 {
+            color: #0A66C2;
+            margin: 5px 0;
+            font-size: 28px;
+        }
+
+        .hero p {
+            margin: 6px 0;
+            color: #555;
+        }
+
+        #video-feed {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(260px, 1fr));
+            gap: 22px;
+            align-items: start;
+        }
+
+        .feed-card {
+            background: white;
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .video-player-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .football-video {
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            max-height: 520px;
+            border-radius: 10px;
+            background: transparent;
+            display: block;
+        }
+
+        .video-info {
+            margin-top: 10px;
+        }
+
+        .video-info h3 {
+            margin: 6px 0;
+            font-size: 16px;
+            color: #111827;
+        }
+
+        .video-info p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        .meta {
+            color: #555;
+            font-size: 13px;
+        }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 10px;
+        }
+
+        .player-photo,
+        .player-placeholder {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+
+        .player-photo {
+            object-fit: cover;
+            border: 2px solid #0A66C2;
+        }
+
+        .player-placeholder {
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-row a {
+            color: #0A66C2;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .stats {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 10px;
+            background: #0A66C2;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .empty {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            text-align: center;
+        }
+
+        @media (max-width: 1000px) {
+            #video-feed {
+                grid-template-columns: repeat(2, minmax(260px, 1fr));
+            }
+        }
+
+        @media (max-width: 650px) {
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            #video-feed {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .preview-video {
+    cursor: pointer;
+}
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <a href="/" class="brand">⚽ Ballconnecthub</a>
+
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/trending/">Trending</a>
+        <a href="/football-news/">Football News</a>
+
+        {% if user.is_authenticated %}
+            <a href="/profile/{{ user.username }}/">My Profile</a>
+            <a href="/upload-video/">Upload</a>
+            <a href="/logout/">Logout</a>
+        {% else %}
+            <a href="/login/">Login</a>
+            <a href="/register/">Register</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="hero">
+        <h1>Discover Football Talent</h1>
+        <p>Watch football skill videos from players around the world.</p>
+
+        <form method="GET" action="/" style="margin-top:10px;">
+            <input 
+                type="text" 
+                name="q" 
+                value="{{ query }}" 
+                placeholder="Search players, country, position, club, or videos..."
+                style="width:70%; max-width:500px; padding:10px; border-radius:8px; border:1px solid #ccc;"
+            >
+
+            <button 
+                type="submit"
+                style="padding:10px 16px; border:none; border-radius:8px; background:#0A66C2; color:white; font-weight:bold; cursor:pointer;"
+            >
+                Search
+            </button>
+        </form>
+    </div>
+
+    {% if query %}
+        <div class="feed-card" style="margin-bottom:18px;">
+            <h3>Search results for "{{ query }}"</h3>
+
+            <h4>Players</h4>
+
+            {% if players %}
+                {% for player in players %}
+                    <p>
+                        <a href="/profile/{{ player.username }}/">
+                            {{ player.username }}
+                        </a>
+                        - {{ player.profile.position|title }}
+                        - {{ player.profile.country }}
+                        - {{ player.profile.club_or_academy }}
+                    </p>
+                {% endfor %}
+            {% else %}
+                <p>No players found.</p>
+            {% endif %}
+        </div>
+    {% endif %}
+
+    {% if videos %}
+
+        <div id="video-feed">
+            {% include "video_feed_items.html" %}
+        </div>
+
+        {% if has_next %}
+            <div id="loading" style="text-align:center; padding:20px; color:#555; font-weight:bold;">
+                Loading more videos...
+            </div>
+        {% endif %}
+
+    {% else %}
+
+        <div class="empty">
+            <h3>No videos yet</h3>
+            <p>Be the first player to upload a football skill video.</p>
+
+            {% if user.is_authenticated %}
+                <a class="btn" href="/upload-video/">Upload Video</a>
+            {% else %}
+                <a class="btn" href="/register/">Create Account</a>
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+</div>
+
+<script>
+    let page = 2;
+    let loading = false;
+    let hasNext = "{{ has_next|yesno:'true,false' }}" === "true";
+    const query = "{{ query }}";
+
+    window.addEventListener("scroll", function () {
+        if (loading || !hasNext) return;
+
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
+            loading = true;
+
+            fetch(`/?page=${page}&q=${encodeURIComponent(query)}`, {
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("video-feed").insertAdjacentHTML("beforeend", data.html);
+
+                hasNext = data.has_next;
+                page += 1;
+                loading = false;
+
+                if (!hasNext && document.getElementById("loading")) {
+                    document.getElementById("loading").innerText = "No more videos";
+                }
+            });
+        }
+    });
+
+    document.addEventListener("contextmenu", function(e) {
+        if (e.target.tagName === "VIDEO") {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener("mouseover", function(event) {
+    const video = event.target.closest(".preview-video");
+
+    if (video) {
+        video.play().catch(function(error) {
+            console.log("Preview autoplay blocked:", error);
+        });
+    }
+});
+
+document.addEventListener("mouseout", function(event) {
+    const video = event.target.closest(".preview-video");
+
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
+});
+</script>
+
+
+</body>
+</html>

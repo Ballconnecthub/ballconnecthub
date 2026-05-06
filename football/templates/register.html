@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register - Ballconnecthub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0A66C2, #16A34A);
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            color: #0A66C2;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            color: #0A66C2;
+            text-decoration: none;
+            margin-left: 15px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 400px;
+            max-width: 92%;
+            margin: 15px auto;
+            background: white;
+            padding: 22px;
+            border-radius: 14px;
+            box-shadow: 0px 8px 30px rgba(0,0,0,0.2);
+            animation: fadeIn 0.7s ease-in-out;
+        }
+
+        .logo-box {
+          text-align: center;
+          font-size: 34px;
+          margin-bottom: 2px;
+        }
+
+        h2 {
+           text-align: center;
+           color: #0A66C2;
+           margin-bottom: 12px;
+
+        }
+
+        label {
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 9px;
+            margin-top: 3px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #0A66C2;
+            box-shadow: 0 0 4px #0A66C2;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background-color: #0A66C2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #084a9e;
+            transform: scale(1.02);
+        }
+
+        .error {
+            color: red;
+            font-size: 13px;
+        }
+
+        .link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .link a, .terms-link {
+            color: #0A66C2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link a:hover, .terms-link:hover {
+            text-decoration: underline;
+        }
+
+        .top-error {
+            color: red;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 12px 18px;
+            }
+
+            .brand {
+                font-size: 18px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+                margin-left: 8px;
+            }
+
+            .container {
+                margin: 25px auto;
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="brand">
+    <a href="/" style="
+        text-decoration:none;
+        color:#0A66C2;
+    ">
+        ⚽ Ballconnecthub
+    </a>
+</div>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/login/">Login</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="logo-box">⚽</div>
+
+    <h2>Create Your Account</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="top-error"><strong>Please fix the errors below.</strong></div>
+        {% endif %}
+
+        {{ form.non_field_errors }}
+
+        <label>Username</label>
+        {{ form.username }}
+        <div class="error">{{ form.username.errors }}</div>
+
+        <label>Email</label>
+        {{ form.email }}
+        <div class="error">{{ form.email.errors }}</div>
+
+        <label>Account Type</label>
+        {{ form.account_type }}
+        <div class="error">{{ form.account_type.errors }}</div>
+
+        <label>Password</label>
+        {{ form.password1 }}
+        <div class="error">{{ form.password1.errors }}</div>
+
+        <label>Confirm Password</label>
+        {{ form.password2 }}
+        <div class="error">{{ form.password2.errors }}</div>
+
+        <p>
+            {{ form.accept_terms }}
+            I agree to <a href="/terms/" class="terms-link">Terms & Conditions</a><br>
+            <span class="error">{{ form.accept_terms.errors }}</span>
+        </p>
+
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <div class="link">
+        Already have an account? <a href="/login/">Login</a>
+    </div>
+
+</div>
+<footer style="
+    background:#0A66C2;
+    color:white;
+    padding:25px;
+    text-align:center;
+    margin-top:40px;
+">
+    <p style="font-weight:bold; margin-bottom:10px;">
+        ⚽ Ballconnecthub
+    </p>
+
+    <p style="font-size:14px; line-height:1.6;">
+        Football talent discovery platform for players, scouts, coaches, clubs, and fans.
+    </p>
+
+    <div style="margin-top:15px;">
+        <a href="/impressum/" style="color:white; margin:0 10px;">Legal Notice</a>
+
+        <a href="/privacy/" style="color:white; margin:0 10px;">
+            Privacy Policy
+        </a>
+
+        <a href="/terms/" style="color:white; margin:0 10px;">
+            Terms & Conditions
+        </a>
+
+        <a href="/copyright/" style="color:white; margin:0 10px;">
+            Copyright
+        </a>
+
+        <a href="/cookies/" style="color:white; margin:0 10px;">
+            Cookie Settings
+        </a>
+    </div>
+
+    <p style="font-size:13px; margin-top:18px;">
+        © 2026 Ballconnecthub. All rights reserved.
+        Users are responsible for uploaded content and must own the rights
+        to videos, images, music, and text uploaded to the platform.
+    </p>
+</footer>
+</body>
+</html>

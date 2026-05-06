@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - Ballconnecthub</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0A66C2, #16A34A);
+        }
+
+        .navbar {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            color: #0A66C2;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .nav-links a {
+            color: #0A66C2;
+            text-decoration: none;
+            margin-left: 15px;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 400px;
+            max-width: 92%;
+            margin: 70px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0px 8px 30px rgba(0,0,0,0.2);
+        }
+
+        .logo-box {
+            text-align: center;
+            font-size: 45px;
+            margin-bottom: 5px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #0A66C2;
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #0A66C2;
+            box-shadow: 0 0 4px #0A66C2;
+        }
+
+        button {
+            width: 100%;
+            padding: 13px;
+            background-color: #0A66C2;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #084a9e;
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 18px;
+        }
+
+        .links a {
+            color: #0A66C2;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .links a:hover {
+            text-decoration: underline;
+        }
+
+        .error {
+            color: red;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <div class="brand">
+    <a href="/" style="
+        text-decoration:none;
+        color:#0A66C2;
+    ">
+        ⚽ Ballconnecthub
+    </a>
+</div>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/register/">Register</a>
+    </div>
+
+</div>
+
+<div class="container">
+
+    <div class="logo-box">⚽</div>
+
+    <h2>Login</h2>
+
+    {% if form.errors %}
+        <div class="error">
+            Invalid username or password
+        </div>
+    {% endif %}
+
+    {% if error_message %}
+    <div class="error">
+        {{ error_message }}
+    </div>
+{% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Username</label>
+        <input type="text" name="username">
+
+        <label>Password</label>
+        <input type="password" name="password">
+
+        <button type="submit">Login</button>
+    </form>
+
+    <div class="links">
+        <p>
+            <a href="/password-reset/">Forgot Password?</a>
+        </p>
+
+        <p>
+            Don't have an account?
+            <a href="/register/">Register</a>
+        </p>
+    </div>
+
+</div>
+<footer style="
+    background:#0A66C2;
+    color:white;
+    padding:25px;
+    text-align:center;
+    margin-top:40px;
+">
+    <p style="font-weight:bold; margin-bottom:10px;">
+        ⚽ Ballconnecthub
+    </p>
+
+    <p style="font-size:14px; line-height:1.6;">
+        Football talent discovery platform for players, scouts, coaches, clubs, and fans.
+    </p>
+
+    <div style="margin-top:15px;">
+        <a href="/impressum/" style="color:white; margin:0 10px;">Legal Notice</a>
+
+        <a href="/privacy/" style="color:white; margin:0 10px;">
+            Privacy Policy
+        </a>
+
+        <a href="/terms/" style="color:white; margin:0 10px;">
+            Terms & Conditions
+        </a>
+
+        <a href="/copyright/" style="color:white; margin:0 10px;">
+            Copyright
+        </a>
+
+        <a href="/cookies/" style="color:white; margin:0 10px;">
+            Cookie Settings
+        </a>
+    </div>
+
+    <p style="font-size:13px; margin-top:18px;">
+        © 2026 Ballconnecthub. All rights reserved.
+        Users are responsible for uploaded content and must own the rights
+        to videos, images, music, and text uploaded to the platform.
+    </p>
+</footer>
+</body>
+</html>

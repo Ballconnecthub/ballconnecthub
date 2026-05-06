@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Share Video - Ballconnecthub</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 60px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        h2 {
+            color: #0A66C2;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        button {
+            margin-top: 15px;
+            background: #0A66C2;
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background: #084a9e;
+        }
+
+        .back {
+            display: block;
+            margin-top: 20px;
+            color: #0A66C2;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .message {
+            color: #16A34A;
+            margin-top: 10px;
+            font-weight: bold;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Share This Football Video</h2>
+
+    <p><strong>{{ video.title }}</strong></p>
+
+    <input 
+        type="text" 
+        id="shareLink"
+        value="http://127.0.0.1:8080/video/{{ video.id }}/"
+        readonly
+    >
+
+    <button onclick="copyLink()">Copy Link</button>
+
+    <div id="copyMessage" class="message">
+        Link copied!
+    </div>
+
+    <a class="back" href="/video/{{ video.id }}/">Back to Video</a>
+</div>
+
+<script>
+    function copyLink() {
+        const link = document.getElementById("shareLink");
+        link.select();
+        link.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(link.value);
+
+        document.getElementById("copyMessage").style.display = "block";
+    }
+</script>
+
+</body>
+</html>

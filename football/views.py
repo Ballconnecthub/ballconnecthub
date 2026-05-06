@@ -1,0 +1,532 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.core.paginator import Paginator
+from django.http import JsonResponse
+from django.template.loader import render_to_string
+from django.db.models import Q
+
+from .forms import RegisterForm, VideoUploadForm
+from .models import Profile, Video, Like, Comment, SavedVideo, ScoutInterest, ReportVideo
+
+
+def calculate_ranking_score(video):
+    return (
+        video.views +
+        (video.likes.count() * 3) +
+        (video.comments.count() * 4) +
+        (video.saves.count() * 5) +
+        (video.shares * 6) +
+        (video.scout_interests.count() * 10)
+    )
+
+
+def home(request):
+    query = request.GET.get("q", "")
+    page_number = request.GET.get("page", 1)
+
+    videos = Video.objects.all().order_by("-created_at")
+    players = User.objects.filter(profile__account_type="player")
+
+    if query:
+        videos = videos.filter(
+            Q(title__icontains=query) |
+            Q(description__icontains=query) |
+            Q(category__icontains=query) |
+            Q(player__username__icontains=query) |
+            Q(player__profile__country__icontains=query) |
+            Q(player__profile__position__icontains=query) |
+            Q(player__profile__club_or_academy__icontains=query)
+        )
+
+        players = players.filter(
+            Q(username__icontains=query) |
+            Q(profile__country__icontains=query) |
+            Q(profile__position__icontains=query) |
+            Q(profile__club_or_academy__icontains=query)
+        )
+
+    paginator = Paginator(videos, 6)
+    page_obj = paginator.get_page(page_number)
+
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        html = render_to_string("video_feed_items.html", {"videos": page_obj})
+
+        return JsonResponse({
+            "html": html,
+            "has_next": page_obj.has_next()
+        })
+
+    return render(request, "home.html", {
+        "videos": page_obj,
+        "players": players,
+        "query": query,
+        "has_next": page_obj.has_next(),
+    })
+
+
+def register_view(request):
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.email = form.cleaned_data["email"]
+            user.save()
+
+            profile, created = Profile.objects.get_or_create(user=user)
+            profile.account_type = form.cleaned_data["account_type"]
+            profile.save()
+
+            login(request, user)
+
+            if profile.account_type == "player":
+                return redirect("profile_setup")
+
+            return redirect("home")
+
+    else:
+        form = RegisterForm()
+
+    return render(request, "register.html", {"form": form})
+
+
+def login_view(request):
+    error_message = None
+
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+
+        user = authenticate(
+            request,
+            username=username,
+            password=password
+        )
+
+        if user:
+            login(request, user)
+            return redirect("home")
+
+        error_message = "Wrong username or password. Please try again."
+
+    return render(request, "login.html", {
+        "error_message": error_message
+    })
+
+
+def logout_view(request):
+    logout(request)
+    return redirect("login")
+
+
+@login_required
+def profile_setup(request):
+    profile = request.user.profile
+
+    if request.method == "POST":
+        profile.country = request.POST.get("country", "")
+
+        if profile.account_type == "player":
+            profile.age = request.POST.get("age") or None
+            profile.position = request.POST.get("position", "")
+            profile.club_or_academy = request.POST.get("club", "")
+            profile.height = request.POST.get("height", "")
+            profile.strong_foot = request.POST.get("strong_foot", "")
+            profile.football_cv = request.POST.get("football_cv", "")
+
+        elif profile.account_type == "scout":
+            profile.scout_organization = request.POST.get("scout_organization", "")
+            profile.scout_region = request.POST.get("scout_region", "")
+            profile.scout_experience = request.POST.get("scout_experience") or None
+            profile.scout_bio = request.POST.get("scout_bio", "")
+
+        elif profile.account_type == "coach":
+            profile.club_name = request.POST.get("club_name", "")
+            profile.club_league = request.POST.get("club_league", "")
+            profile.academy_name = request.POST.get("academy_name", "")
+            profile.founded_year = request.POST.get("founded_year") or None
+            profile.club_bio = request.POST.get("club_bio", "")
+
+        profile.save()
+
+        return redirect("profile", username=request.user.username)
+
+    return render(request, "profile_setup.html", {
+        "profile": profile
+    })
+
+
+def profile_view(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    profile = profile_user.profile
+
+    videos = profile_user.videos.all().order_by("-created_at")
+
+    for video in videos:
+        video.ranking_score_value = calculate_ranking_score(video)
+
+    total_likes = sum(video.likes.count() for video in videos)
+    total_views = sum(video.views for video in videos)
+
+    scout_interests_count = ScoutInterest.objects.filter(
+        scout=profile_user
+    ).count()
+
+    saved_videos_count = SavedVideo.objects.filter(
+        user=profile_user
+    ).count()
+
+    shared_videos_count = sum(video.shares for video in videos)
+
+    return render(request, "profile.html", {
+        "profile_user": profile_user,
+        "profile": profile,
+        "videos": videos,
+        "total_likes": total_likes,
+        "total_views": total_views,
+        "scout_interests_count": scout_interests_count,
+        "saved_videos_count": saved_videos_count,
+        "shared_videos_count": shared_videos_count,
+    })
+
+
+def terms_view(request):
+    return render(request, "terms.html")
+
+
+@login_required
+def delete_account(request):
+    if request.method == "POST":
+        user = request.user
+        logout(request)
+        user.delete()
+        return redirect("home")
+
+    return render(request, "delete_account.html")
+
+
+@login_required
+def edit_profile(request):
+    profile = request.user.profile
+
+    if request.method == "POST":
+        new_username = request.POST.get("username")
+
+        if new_username:
+            request.user.username = new_username
+            request.user.save()
+
+        profile.country = request.POST.get("country", "")
+
+        if request.FILES.get("profile_photo"):
+            profile.profile_photo = request.FILES.get("profile_photo")
+
+        if profile.account_type == "player":
+            profile.age = request.POST.get("age") or None
+            profile.position = request.POST.get("position", "")
+            profile.club_or_academy = request.POST.get("club", "")
+            profile.height = request.POST.get("height", "")
+            profile.strong_foot = request.POST.get("strong_foot", "")
+            profile.football_cv = request.POST.get("football_cv", "")
+
+        elif profile.account_type == "scout":
+            profile.scout_organization = request.POST.get("scout_organization", "")
+            profile.scout_region = request.POST.get("scout_region", "")
+            profile.scout_experience = request.POST.get("scout_experience") or None
+            profile.scout_bio = request.POST.get("scout_bio", "")
+
+        elif profile.account_type == "coach":
+            profile.club_name = request.POST.get("club_name", "")
+            profile.club_league = request.POST.get("club_league", "")
+            profile.academy_name = request.POST.get("academy_name", "")
+            profile.founded_year = request.POST.get("founded_year") or None
+            profile.club_bio = request.POST.get("club_bio", "")
+
+        profile.save()
+
+        return redirect("profile", username=request.user.username)
+
+    return render(request, "edit_profile.html", {
+        "profile": profile
+    })
+
+
+@login_required
+def follow_player(request, username):
+    profile_user = get_object_or_404(User, username=username)
+    profile = profile_user.profile
+
+    if request.user != profile_user:
+        if request.user in profile.fans.all():
+            profile.fans.remove(request.user)
+        else:
+            profile.fans.add(request.user)
+
+    return redirect("profile", username=username)
+
+
+@login_required
+def upload_video(request):
+    if request.method == "POST":
+        form = VideoUploadForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            video = form.save(commit=False)
+            video.player = request.user
+            video.save()
+
+            return redirect("profile", username=request.user.username)
+
+    else:
+        form = VideoUploadForm()
+
+    return render(request, "upload_video.html", {
+        "form": form
+    })
+
+
+@login_required
+def like_video(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    like, created = Like.objects.get_or_create(
+        user=request.user,
+        video=video
+    )
+
+    if not created:
+        like.delete()
+
+    return redirect("profile", username=video.player.username)
+
+
+@login_required
+def add_comment(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    if request.method == "POST":
+        text = request.POST.get("text")
+
+        if text:
+            Comment.objects.create(
+                user=request.user,
+                video=video,
+                text=text
+            )
+
+    return redirect("profile", username=video.player.username)
+
+
+def watch_video(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    video.views += 1
+    video.save()
+
+    recommended_videos = Video.objects.exclude(id=video.id).filter(
+        category=video.category
+    )[:6]
+
+    if not recommended_videos:
+        recommended_videos = Video.objects.exclude(id=video.id)[:6]
+
+    for recommended in recommended_videos:
+        recommended.ranking_score_value = calculate_ranking_score(recommended)
+
+    return render(request, "watch_video.html", {
+        "video": video,
+        "recommended_videos": recommended_videos,
+    })
+
+
+@login_required
+def delete_video(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    if video.player != request.user:
+        return redirect("profile", username=video.player.username)
+
+    if request.method == "POST":
+        video.delete()
+        return redirect("profile", username=request.user.username)
+
+    return render(request, "delete_video.html", {
+        "video": video
+    })
+
+@login_required
+def edit_video(request, video_id):
+
+    video = get_object_or_404(Video, id=video_id)
+
+    if video.player != request.user:
+        return redirect("profile", username=video.player.username)
+
+    if request.method == "POST":
+
+        video.title = request.POST.get("title")
+        video.description = request.POST.get("description")
+        video.category = request.POST.get("category")
+
+        if request.FILES.get("video_file"):
+            video.video_file = request.FILES.get("video_file")
+
+        if request.FILES.get("thumbnail"):
+            video.thumbnail = request.FILES.get("thumbnail")
+
+        video.save()
+
+        return redirect("profile", username=request.user.username)
+
+    return render(request, "edit_video.html", {
+        "video": video
+    })
+
+
+@login_required
+def save_video(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    saved, created = SavedVideo.objects.get_or_create(
+        user=request.user,
+        video=video
+    )
+
+    if not created:
+        saved.delete()
+
+    return redirect("profile", username=video.player.username)
+
+
+@login_required
+def share_video(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    video.shares += 1
+    video.save()
+
+    return render(request, "share_video.html", {
+        "video": video
+    })
+
+
+@login_required
+def scout_interest(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    if request.user.profile.account_type not in ["scout", "coach"]:
+        return redirect("profile", username=video.player.username)
+
+    interest, created = ScoutInterest.objects.get_or_create(
+        scout=request.user,
+        video=video
+    )
+
+    if not created:
+        interest.delete()
+
+    return redirect("profile", username=video.player.username)
+
+
+def trending_videos(request):
+    videos = list(Video.objects.all())
+
+    for video in videos:
+        video.ranking_score_value = calculate_ranking_score(video)
+
+    videos = sorted(
+        videos,
+        key=lambda video: video.ranking_score_value,
+        reverse=True
+    )
+
+    return render(request, "trending.html", {
+        "videos": videos
+    })
+
+def football_news(request):
+    return render(request, "football_news.html")
+
+def football_news_article(request, slug):
+    articles = {
+        "young-talents-attract-european-scouts": {
+            "title": "Young Talents Attract European Scouts",
+            "category": "Transfer News",
+            "content": """
+European clubs are increasingly using online platforms to discover young football players.
+
+Players who upload clear football videos, match highlights, training clips, and technical skill videos can become visible to scouts faster.
+
+Scouts often look for speed, discipline, ball control, tactical intelligence, decision-making, and confidence under pressure.
+
+Ballconnecthub helps young players present their football talent professionally to scouts, coaches, clubs, and academies.
+"""
+        },
+        "football-academies-focus-on-youth-development": {
+            "title": "Football Academies Focus On Youth Development",
+            "category": "Academy News",
+            "content": """
+Modern football academies focus on more than talent alone.
+
+They train young players in technique, fitness, discipline, teamwork, nutrition, communication, and football intelligence.
+
+Players who combine skill with discipline and good mentality often have better chances to progress in football.
+"""
+        },
+        "coaches-emphasize-tactical-intelligence": {
+            "title": "Coaches Emphasize Tactical Intelligence",
+            "category": "Match Analysis",
+            "content": """
+Football today requires smart decision-making.
+
+Coaches value positioning, pressing, passing timing, movement without the ball, and awareness during matches.
+
+A player who understands the game can stand out even when they are not scoring goals.
+"""
+        },
+    }
+
+    article = articles.get(slug)
+
+    if not article:
+        return redirect("football_news")
+
+    return render(request, "football_news_article.html", {
+        "article": article
+    })
+
+@login_required
+def moderation_dashboard(request):
+    if not request.user.is_staff:
+        return redirect("home")
+
+    videos = Video.objects.all().order_by("-created_at")
+    reports = ReportVideo.objects.all().order_by("-created_at")
+
+    return render(request, "moderation_dashboard.html", {
+        "videos": videos,
+        "reports": reports,
+    })
+
+@login_required
+def report_video(request, video_id):
+    video = get_object_or_404(Video, id=video_id)
+
+    if request.method == "POST":
+        reason = request.POST.get("reason")
+        message = request.POST.get("message", "")
+
+        ReportVideo.objects.create(
+            reporter=request.user,
+            video=video,
+            reason=reason,
+            message=message
+        )
+
+        return redirect("watch_video", video_id=video.id)
+
+    return render(request, "report_video.html", {
+        "video": video
+    })

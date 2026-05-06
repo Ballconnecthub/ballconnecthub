@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trending Videos - Ballconnecthub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
+        }
+
+        .navbar {
+            background: #0A66C2;
+            color: white;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            color: white;
+            text-decoration: none;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .container {
+            width: 1200px;
+            max-width: 96%;
+            margin: 18px auto;
+        }
+
+        .page-title {
+            background: white;
+            color: #0A66C2;
+            text-align: center;
+            padding: 18px;
+            border-radius: 14px;
+            margin-bottom: 18px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(260px, 1fr));
+            gap: 22px;
+            align-items: start;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 14px;
+            padding: 12px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .rank-badge {
+            color: white;
+            padding: 7px 12px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .rank-1 { background: #16A34A; }
+        .rank-2 { background: #2563EB; }
+        .rank-3 { background: #9333EA; }
+        .rank-4 { background: #EA580C; }
+        .rank-other { background: #DC2626; }
+
+        .video-player-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: transparent;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .football-video {
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            max-height: 520px;
+            border-radius: 10px;
+            background: transparent;
+            display: block;
+        }
+
+        .video-info {
+            margin-top: 10px;
+        }
+
+        .video-title {
+            color: #111827;
+            margin: 6px 0;
+            font-size: 16px;
+        }
+
+        .meta {
+            color: #555;
+            font-size: 13px;
+            margin: 5px 0;
+        }
+
+        .player-row {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-top: 10px;
+        }
+
+        .player-photo,
+        .player-placeholder {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+        }
+
+        .player-photo {
+            object-fit: cover;
+            border: 2px solid #0A66C2;
+        }
+
+        .player-placeholder {
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .player-row a {
+            color: #0A66C2;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .stats {
+            margin-top: 10px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            font-size: 12px;
+            font-weight: bold;
+            color: #1F2937;
+        }
+
+        .stat {
+            background: #f0f4fa;
+            padding: 7px 9px;
+            border-radius: 8px;
+        }
+
+        .profile-link {
+            display: inline-block;
+            margin-top: 10px;
+            background: #16A34A;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .watch-link {
+            display: inline-block;
+            margin-top: 10px;
+            background: #0A66C2;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .empty {
+            background: white;
+            padding: 25px;
+            border-radius: 14px;
+            text-align: center;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+        }
+
+        @media (max-width: 1000px) {
+            .video-grid {
+                grid-template-columns: repeat(2, minmax(260px, 1fr));
+            }
+        }
+
+        @media (max-width: 650px) {
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .video-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <a href="/" class="brand">⚽ Ballconnecthub</a>
+
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/trending/">🔥 Trending</a>
+       <a href="/football-news/">Football News</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <h1 class="page-title">
+        🔥 Trending Football Videos
+    </h1>
+
+    {% if videos %}
+
+        <div class="video-grid">
+
+            {% for video in videos %}
+
+                <div class="video-card">
+
+                    {% if forloop.counter == 1 %}
+                        <div class="rank-badge rank-1">🟢 #1 Trending</div>
+                    {% elif forloop.counter == 2 %}
+                        <div class="rank-badge rank-2">🔵 #2 Trending</div>
+                    {% elif forloop.counter == 3 %}
+                        <div class="rank-badge rank-3">🟣 #3 Trending</div>
+                    {% elif forloop.counter <= 5 %}
+                        <div class="rank-badge rank-4">🟠 #{{ forloop.counter }} Trending</div>
+                    {% else %}
+                        <div class="rank-badge rank-other">🔴 #{{ forloop.counter }} Trending</div>
+                    {% endif %}
+
+                    <div class="video-player-wrap">
+                        <video
+    class="football-video preview-video"
+    controls
+    muted
+    preload="metadata"
+    controlsList="nodownload"
+    disablePictureInPicture
+    oncontextmenu="return false;"
+>
+    <source src="{{ video.video_file.url }}">
+    Your browser does not support the video tag.
+</video>
+                    </div>
+
+                    <div class="video-info">
+                        <h2 class="video-title">
+                            {{ video.title }}
+                        </h2>
+
+                        <p class="meta">
+                            Category: {{ video.category|title }}
+                        </p>
+
+                        {% if video.description %}
+                            <p class="meta">
+                                {{ video.description|truncatechars:90 }}
+                            </p>
+                        {% endif %}
+                    </div>
+
+                    <div class="player-row">
+                        {% if video.player.profile.profile_photo %}
+                            <img class="player-photo" src="{{ video.player.profile.profile_photo.url }}">
+                        {% else %}
+                            <div class="player-placeholder">⚽</div>
+                        {% endif %}
+
+                        <div>
+                            <a href="/profile/{{ video.player.username }}/">
+                                {{ video.player.username }}
+{% include "verified_badge.html" with profile_obj=video.player.profile %}
+                            </a>
+
+                            <div class="meta">
+                                {{ video.player.profile.position|title }} · {{ video.player.profile.country }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stats">
+                        <div class="stat">👀 {{ video.views }}</div>
+                        <div class="stat">❤️ {{ video.likes.count }}</div>
+                        <div class="stat">💬 {{ video.comments.count }}</div>
+                        <div class="stat">🔖 {{ video.saves.count }}</div>
+                        <div class="stat">📤 {{ video.shares }}</div>
+                        <div class="stat">🕵️ {{ video.scout_interests.count }}</div>
+                        <div class="stat">🔥 {{ video.ranking_score_value }}</div>
+                    </div>
+
+                    <a class="watch-link" href="/video/{{ video.id }}/">
+                        Watch Video
+                    </a>
+
+                    <a class="profile-link" href="/profile/{{ video.player.username }}/">
+                        View Player
+                    </a>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+            No trending videos yet.
+        </div>
+
+    {% endif %}
+
+</div>
+
+<footer style="
+    background:#0A66C2;
+    color:white;
+    padding:25px;
+    text-align:center;
+    margin-top:40px;
+">
+    <p style="font-weight:bold; margin-bottom:10px;">
+        ⚽ Ballconnecthub
+    </p>
+
+    <p style="font-size:14px; line-height:1.6;">
+        Football talent discovery platform for players, scouts, coaches, clubs, and fans.
+    </p>
+
+    <div style="margin-top:15px;">
+        <a href="/impressum/" style="color:white; margin:0 10px;">Legal Notice</a>
+        <a href="/privacy/" style="color:white; margin:0 10px;">Privacy Policy</a>
+        <a href="/terms/" style="color:white; margin:0 10px;">Terms & Conditions</a>
+        <a href="/copyright/" style="color:white; margin:0 10px;">Copyright</a>
+        <a href="/cookies/" style="color:white; margin:0 10px;">Cookie Settings</a>
+    </div>
+
+    <p style="font-size:13px; margin-top:18px;">
+        © 2026 Ballconnecthub. All rights reserved.
+        Users are responsible for uploaded content and must own the rights
+        to videos, images, music, and text uploaded to the platform.
+    </p>
+</footer>
+
+</body>
+</html>

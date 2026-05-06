@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Video - Ballconnecthub</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        body{
+            margin:0;
+            font-family:Arial,sans-serif;
+            background:#f4f7fb;
+        }
+
+        .navbar{
+            background:#0A66C2;
+            padding:15px 25px;
+        }
+
+        .navbar a{
+            color:white;
+            text-decoration:none;
+            font-weight:bold;
+        }
+
+        .container{
+            width:600px;
+            max-width:95%;
+            margin:40px auto;
+            background:white;
+            padding:30px;
+            border-radius:14px;
+            box-shadow:0px 5px 20px rgba(0,0,0,0.08);
+        }
+
+        h2{
+            color:#0A66C2;
+            text-align:center;
+            margin-bottom:25px;
+        }
+
+        label{
+            display:block;
+            margin-top:15px;
+            margin-bottom:5px;
+            font-weight:bold;
+        }
+
+        input,
+        textarea,
+        select{
+            width:100%;
+            padding:12px;
+            border-radius:8px;
+            border:1px solid #ccc;
+            box-sizing:border-box;
+        }
+
+        textarea{
+            min-height:120px;
+            resize:vertical;
+        }
+
+        .btn{
+            width:100%;
+            padding:14px;
+            border:none;
+            border-radius:10px;
+            font-size:16px;
+            font-weight:bold;
+            cursor:pointer;
+            margin-top:20px;
+        }
+
+        .save-btn{
+            background:#16A34A;
+            color:white;
+        }
+
+        .cancel-btn{
+            background:#dc2626;
+            color:white;
+            text-decoration:none;
+            display:block;
+            text-align:center;
+            padding:14px;
+            border-radius:10px;
+            margin-top:12px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <a href="/">⚽ Ballconnecthub</a>
+</div>
+
+<div class="container">
+
+    <h2>Edit Video</h2>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <label>Title</label>
+        <input
+            type="text"
+            name="title"
+            value="{{ video.title }}"
+            required
+        >
+
+        <label>Description</label>
+        <textarea name="description">{{ video.description }}</textarea>
+
+        <label>Category</label>
+
+        <select name="category">
+
+            <option value="dribbling" {% if video.category == "dribbling" %}selected{% endif %}>
+                Dribbling
+            </option>
+
+            <option value="shooting" {% if video.category == "shooting" %}selected{% endif %}>
+                Shooting
+            </option>
+
+            <option value="passing" {% if video.category == "passing" %}selected{% endif %}>
+                Passing
+            </option>
+
+            <option value="goals" {% if video.category == "goals" %}selected{% endif %}>
+                Goals
+            </option>
+
+            <option value="goalkeeper" {% if video.category == "goalkeeper" %}selected{% endif %}>
+                Goalkeeper Saves
+            </option>
+
+            <option value="freestyle" {% if video.category == "freestyle" %}selected{% endif %}>
+                Freestyle
+            </option>
+
+            <option value="training" {% if video.category == "training" %}selected{% endif %}>
+                Training Drills
+            </option>
+
+            <option value="match" {% if video.category == "match" %}selected{% endif %}>
+                Match Highlights
+            </option>
+
+        </select>
+
+        <label>Replace Video (optional)</label>
+
+<input
+    type="file"
+    name="video_file"
+>
+
+<label>Replace Thumbnail (optional)</label>
+
+<input
+    type="file"
+    name="thumbnail"
+    accept="image/*"
+>
+
+{% if video.thumbnail %}
+    <p>Current Thumbnail:</p>
+
+    <img
+        src="{{ video.thumbnail.url }}"
+        style="
+            width:100%;
+            max-height:300px;
+            object-fit:cover;
+            border-radius:12px;
+            margin-top:10px;
+        "
+    >
+{% endif %}
+
+        <button class="btn save-btn" type="submit">
+            Save Changes
+        </button>
+
+    </form>
+
+    <a
+        class="cancel-btn"
+        href="/profile/{{ request.user.username }}/"
+    >
+        Cancel
+    </a>
+
+</div>
+
+</body>
+</html>

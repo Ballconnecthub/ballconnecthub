@@ -1,0 +1,51 @@
+<h2>Complete Your Player Profile</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <p>
+        Age:<br>
+        <input type="number" name="age">
+    </p>
+
+    <p>
+        Country:<br>
+        <input type="text" name="country">
+    </p>
+
+    <p>
+        Position:<br>
+        <select name="position">
+            <option value="goalkeeper">Goalkeeper</option>
+            <option value="defender">Defender</option>
+            <option value="midfielder">Midfielder</option>
+            <option value="forward">Forward</option>
+        </select>
+    </p>
+
+    <p>
+        Club / Academy:<br>
+        <input type="text" name="club">
+    </p>
+
+    <p>
+        Height:<br>
+        <input type="text" name="height" placeholder="Example: 175 cm">
+    </p>
+
+    <p>
+        Strong Foot:<br>
+        <select name="strong_foot">
+            <option value="right">Right</option>
+            <option value="left">Left</option>
+            <option value="both">Both</option>
+        </select>
+    </p>
+
+    <p>
+        Football CV:<br>
+        <textarea name="football_cv" rows="5" placeholder="Tell scouts about your football journey"></textarea>
+    </p>
+
+    <button type="submit">Save Profile</button>
+</form>

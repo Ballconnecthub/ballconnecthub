@@ -1,0 +1,65 @@
+{% for video in videos %}
+
+<div class="feed-card">
+
+    <div class="video-player-wrap">
+       <video
+    class="football-video preview-video"
+    controls
+    muted
+    preload="metadata"
+    controlsList="nodownload"
+    disablePictureInPicture
+    oncontextmenu="return false;"
+>
+    <source src="{{ video.video_file.url }}">
+    Your browser does not support the video tag.
+</video>
+    </div>
+
+    <div class="video-info">
+        <h3>{{ video.title }}</h3>
+
+        <p class="meta">
+            Category: {{ video.category|title }}
+        </p>
+
+        {% if video.description %}
+            <p>{{ video.description|truncatechars:90 }}</p>
+        {% endif %}
+    </div>
+
+    <div class="player-row">
+        {% if video.player.profile.profile_photo %}
+            <img class="player-photo" src="{{ video.player.profile.profile_photo.url }}">
+        {% else %}
+            <div class="player-placeholder">⚽</div>
+        {% endif %}
+
+        <div>
+            <a href="/profile/{{ video.player.username }}/">
+                {{ video.player.username }}
+{% include "verified_badge.html" with profile_obj=video.player.profile %}
+            </a>
+
+            <div class="meta">
+                {{ video.player.profile.position|title }} · {{ video.player.profile.country }}
+            </div>
+        </div>
+    </div>
+
+    <div class="stats">
+        <span>👀 {{ video.views }}</span>
+        <span>❤️ {{ video.likes.count }}</span>
+        <span>💬 {{ video.comments.count }}</span>
+        <span>🔖 {{ video.saves.count }}</span>
+        <span>📤 {{ video.shares }}</span>
+    </div>
+
+    <a class="btn" href="/video/{{ video.id }}/">
+        Watch Video
+    </a>
+
+</div>
+
+{% endfor %}

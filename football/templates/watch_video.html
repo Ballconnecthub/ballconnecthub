@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ video.title }} - Ballconnecthub</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+
+        body{
+            font-family:Arial, sans-serif;
+            background:#f4f7fb;
+            margin:0;
+        }
+
+        .navbar{
+            background:#0A66C2;
+            padding:15px 25px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+        }
+
+        .navbar a{
+            color:white;
+            text-decoration:none;
+            font-weight:bold;
+            margin-right:15px;
+        }
+
+        .container{
+            width:1300px;
+            max-width:96%;
+            margin:25px auto;
+            display:grid;
+            grid-template-columns:2fr 1fr;
+            gap:20px;
+        }
+
+        .main-video,
+        .recommendations{
+            background:white;
+            padding:20px;
+            border-radius:14px;
+            box-shadow:0px 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .video-wrap{
+            width:100%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:#f9fafc;
+            border-radius:12px;
+            overflow:hidden;
+        }
+
+        .football-video{
+            max-width:100%;
+            width:auto;
+            height:auto;
+            max-height:650px;
+            border-radius:12px;
+            background:black;
+        }
+
+        .video-title{
+            color:#0A66C2;
+            margin-top:0;
+        }
+
+        .description{
+            color:#444;
+            line-height:1.6;
+            margin-top:15px;
+        }
+
+        .stats{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin-top:15px;
+        }
+
+        .stat{
+            background:#f0f4fa;
+            padding:10px 14px;
+            border-radius:10px;
+            font-size:14px;
+            font-weight:bold;
+            color:#1F2937;
+        }
+
+        .player-box{
+            margin-top:18px;
+            padding-top:15px;
+            border-top:1px solid #eee;
+        }
+
+        .player-box a{
+            color:#0A66C2;
+            font-weight:bold;
+            text-decoration:none;
+        }
+
+        .recommendations h3{
+            color:#0A66C2;
+            margin-top:0;
+        }
+
+        .rec-card{
+            display:flex;
+            gap:12px;
+            margin-bottom:18px;
+            padding-bottom:14px;
+            border-bottom:1px solid #eee;
+        }
+
+        .rec-thumb{
+            width:130px;
+            flex-shrink:0;
+        }
+
+        .rec-thumb video{
+            width:100%;
+            border-radius:10px;
+        }
+
+        .rec-info a{
+            color:#0A66C2;
+            font-weight:bold;
+            text-decoration:none;
+        }
+
+        .rec-meta{
+            color:#555;
+            font-size:13px;
+            margin-top:5px;
+        }
+
+        footer{
+            background:#0A66C2;
+            color:white;
+            padding:25px;
+            text-align:center;
+            margin-top:40px;
+        }
+
+        footer a{
+            color:white;
+            margin:0 10px;
+            text-decoration:none;
+        }
+
+        @media(max-width:950px){
+
+            .container{
+                grid-template-columns:1fr;
+            }
+
+            .football-video{
+                max-height:500px;
+            }
+        }
+
+        @media(max-width:600px){
+
+            .navbar{
+                flex-direction:column;
+                gap:10px;
+                align-items:flex-start;
+            }
+
+            .football-video{
+                max-height:420px;
+            }
+
+            .stats{
+                flex-direction:column;
+            }
+
+            .rec-card{
+                flex-direction:column;
+            }
+
+            .rec-thumb{
+                width:100%;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="navbar">
+
+    <div>
+        <a href="/">⚽ Ballconnecthub</a>
+    </div>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/trending/">🔥 Trending</a>
+        <a href="/football-news/">Football News</a>
+        <a href="/profile/{{ video.player.username }}/">
+            Player Profile
+        </a>
+    </div>
+
+</div>
+
+<div class="container">
+
+    <!-- MAIN VIDEO -->
+
+    <div class="main-video">
+
+        <h2 class="video-title">
+            {{ video.title }}
+        </h2>
+
+        <div class="video-wrap">
+
+            <video
+                id="mainVideo"
+                class="football-video"
+                controls
+                autoplay
+            >
+                <source src="{{ video.video_file.url }}">
+                Your browser does not support the video tag.
+            </video>
+
+        </div>
+
+        <p class="description">
+            {{ video.description }}
+        </p>
+
+        <div class="stats">
+
+            <div class="stat">
+                👀 {{ video.views }} Views
+            </div>
+
+            <div class="stat">
+                ❤️ {{ video.likes.count }} Likes
+            </div>
+
+            <div class="stat">
+                💬 {{ video.comments.count }} Comments
+            </div>
+
+            <div class="stat">
+                🔖 {{ video.saves.count }} Saves
+            </div>
+
+            <div class="stat">
+                📤 {{ video.shares }} Shares
+            </div>
+
+            <div class="stat">
+                🕵️ {{ video.scout_interests.count }} Scout Interest
+            </div>
+
+        </div>
+
+        <div class="player-box">
+
+            <p>
+                <strong>Player:</strong>
+
+                <a href="/profile/{{ video.player.username }}/">
+                   {{ video.player.username }}
+{% include "verified_badge.html" with profile_obj=video.player.profile %}
+                </a>
+            </p>
+
+            <p>
+                {{ video.player.profile.position|title }}
+                ·
+                {{ video.player.profile.country }}
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- RECOMMENDED VIDEOS -->
+
+    <div class="recommendations">
+
+        <h3>
+            🎯 Recommended Videos
+        </h3>
+
+        {% if recommended_videos %}
+
+            {% for rec in recommended_videos %}
+
+                <div class="rec-card">
+
+                    <div class="rec-thumb">
+
+                        <video muted>
+                            <source src="{{ rec.video_file.url }}">
+                        </video>
+
+                    </div>
+
+                    <div class="rec-info">
+
+                        <a href="/video/{{ rec.id }}/">
+                            {{ rec.title }}
+                        </a>
+
+                        <p style="margin:6px 0;">
+                            {{ rec.player.username }}
+{% include "verified_badge.html" with profile_obj=rec.player.profile %}
+                        </p>
+
+                        <div class="rec-meta">
+
+                            {{ rec.category|title }}
+
+                            · 👀 {{ rec.views }}
+
+                            · 🔥 {{ rec.ranking_score_value }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <p>
+                No recommended videos yet.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% if recommended_videos %}
+
+<script>
+
+    const mainVideo = document.getElementById("mainVideo");
+
+    mainVideo.addEventListener("ended", function () {
+
+        window.location.href = "/video/{{ recommended_videos.0.id }}/";
+
+    });
+
+</script>
+
+{% endif %}
+
+<footer>
+
+    <p style="font-weight:bold; margin-bottom:10px;">
+        ⚽ Ballconnecthub
+    </p>
+
+    <p style="font-size:14px; line-height:1.6;">
+        Football talent discovery platform for players,
+        scouts, coaches, clubs, and fans.
+    </p>
+
+    <div style="margin-top:15px;">
+
+        <a href="/impressum/">
+            Legal Notice
+        </a>
+
+        <a href="/privacy/">
+            Privacy Policy
+        </a>
+
+        <a href="/terms/">
+            Terms & Conditions
+        </a>
+
+        <a href="/copyright/">
+            Copyright
+        </a>
+
+        <a href="/cookies/">
+            Cookie Settings
+        </a>
+
+    </div>
+
+    <p style="font-size:13px; margin-top:18px;">
+        © 2026 Ballconnecthub.
+        All rights reserved.
+    </p>
+
+</footer>
+
+</body>
+</html>
