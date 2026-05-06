@@ -219,6 +219,10 @@
             margin-bottom: 2px;
         }
 
+        .preview-video {
+            cursor: pointer;
+        }
+
         .video-actions-side {
             width: 150px;
             display: flex;
@@ -246,6 +250,31 @@
             padding: 10px;
             border-radius: 8px;
             margin-top: 10px;
+        }
+
+        .pagination {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a,
+        .pagination span {
+            background: white;
+            color: #0A66C2;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+        }
+
+        .pagination .current {
+            background: #0A66C2;
+            color: white;
         }
 
         footer {
@@ -322,13 +351,9 @@
         </h1>
 
         {% if profile_user.is_staff %}
-            <div class="account-type">
-                Administrator
-            </div>
+            <div class="account-type">Administrator</div>
         {% else %}
-            <div class="account-type">
-                {{ profile.account_type|title }}
-            </div>
+            <div class="account-type">{{ profile.account_type|title }}</div>
         {% endif %}
 
         {% if user.is_authenticated and user != profile_user and not profile_user.is_staff %}
@@ -336,13 +361,9 @@
                 {% csrf_token %}
 
                 {% if user in profile.fans.all %}
-                    <button class="btn delete-btn" type="submit">
-                        Unfollow
-                    </button>
+                    <button class="btn delete-btn" type="submit">Unfollow</button>
                 {% else %}
-                    <button class="btn contact-btn" type="submit">
-                        Follow
-                    </button>
+                    <button class="btn contact-btn" type="submit">Follow</button>
                 {% endif %}
             </form>
         {% endif %}
@@ -350,13 +371,8 @@
         {% if user == profile_user and not profile_user.is_staff %}
             <br>
 
-            <a href="/edit-profile/" class="top-action-btn edit-action">
-                Edit Profile
-            </a>
-
-            <a href="/upload-video/" class="top-action-btn upload-action">
-                Upload Video
-            </a>
+            <a href="/edit-profile/" class="top-action-btn edit-action">Edit Profile</a>
+            <a href="/upload-video/" class="top-action-btn upload-action">Upload Video</a>
         {% endif %}
 
     </div>
@@ -366,20 +382,9 @@
         <div class="section">
             <h3>Administrator Information</h3>
 
-            <p class="info">
-    <strong>Role:</strong>
-    {{ profile.admin_role }}
-</p>
-
-<p class="info">
-    <strong>Access Level:</strong>
-    {{ profile.admin_access_level }}
-</p>
-
-<p class="info">
-    <strong>Permissions:</strong>
-    {{ profile.admin_permissions }}
-</p>
+            <p class="info"><strong>Role:</strong> {{ profile.admin_role }}</p>
+            <p class="info"><strong>Access Level:</strong> {{ profile.admin_access_level }}</p>
+            <p class="info"><strong>Permissions:</strong> {{ profile.admin_permissions }}</p>
 
             <div class="admin-badge">
                 🛡️ Official Ballconnecthub Administrator
@@ -389,17 +394,9 @@
         <div class="section">
             <h3>Admin Dashboard</h3>
 
-            <a href="/moderation/" class="top-action-btn edit-action">
-                Open Moderation Dashboard
-            </a>
-
-            <a href="/admin/" class="top-action-btn upload-action">
-                Open Django Admin
-            </a>
-
-            <a href="/" class="top-action-btn admin-action">
-                Back to Platform
-            </a>
+            <a href="/moderation/" class="top-action-btn edit-action">Open Moderation Dashboard</a>
+            <a href="/admin/" class="top-action-btn upload-action">Open Django Admin</a>
+            <a href="/" class="top-action-btn admin-action">Back to Platform</a>
         </div>
 
     {% else %}
@@ -433,13 +430,9 @@
                 <p class="info"><strong>Experience:</strong> {{ profile.scout_experience }} years</p>
 
                 {% if profile.verified_scout %}
-                    <div class="verified-scout">
-                        ✅ Verified Scout
-                    </div>
+                    <div class="verified-scout">✅ Verified Scout</div>
                 {% else %}
-                    <div class="not-verified">
-                        Scout Not Verified
-                    </div>
+                    <div class="not-verified">Scout Not Verified</div>
                 {% endif %}
             </div>
 
@@ -460,13 +453,9 @@
                 <p class="info"><strong>Founded Year:</strong> {{ profile.founded_year }}</p>
 
                 {% if profile.verified_club %}
-                    <div class="verified-club">
-                        🏆 Verified Club
-                    </div>
+                    <div class="verified-club">🏆 Verified Club</div>
                 {% else %}
-                    <div class="not-verified">
-                        Club Not Verified
-                    </div>
+                    <div class="not-verified">Club Not Verified</div>
                 {% endif %}
             </div>
 
@@ -653,23 +642,17 @@
                                 </div>
 
                                 <a href="#video-{{ video.id }}">
-                                    <button class="btn edit-btn">
-                                        Watch
-                                    </button>
+                                    <button class="btn edit-btn">Watch</button>
                                 </a>
 
                                 {% if user == video.player %}
 
                                     <a href="/edit-video/{{ video.id }}/">
-                                        <button class="btn edit-btn">
-                                            Edit
-                                        </button>
+                                        <button class="btn edit-btn">Edit</button>
                                     </a>
 
                                     <a href="/delete-video/{{ video.id }}/">
-                                        <button class="btn delete-btn">
-                                            Delete
-                                        </button>
+                                        <button class="btn delete-btn">Delete</button>
                                     </a>
 
                                 {% endif %}
@@ -679,20 +662,14 @@
                                         {% csrf_token %}
 
                                         {% if user in video.likes.all %}
-                                            <button class="btn delete-btn" type="submit">
-                                                Unlike
-                                            </button>
+                                            <button class="btn delete-btn" type="submit">Unlike</button>
                                         {% else %}
-                                            <button class="btn contact-btn" type="submit">
-                                                Like
-                                            </button>
+                                            <button class="btn contact-btn" type="submit">Like</button>
                                         {% endif %}
                                     </form>
                                 {% else %}
                                     <a href="/login/">
-                                        <button class="btn edit-btn">
-                                            Login to Like
-                                        </button>
+                                        <button class="btn edit-btn">Login to Like</button>
                                     </a>
                                 {% endif %}
 
@@ -701,34 +678,24 @@
                                         {% csrf_token %}
 
                                         {% if user in video.saves.all %}
-                                            <button class="btn delete-btn" type="submit">
-                                                Unsave
-                                            </button>
+                                            <button class="btn delete-btn" type="submit">Unsave</button>
                                         {% else %}
-                                            <button class="btn edit-btn" type="submit">
-                                                Save
-                                            </button>
+                                            <button class="btn edit-btn" type="submit">Save</button>
                                         {% endif %}
                                     </form>
                                 {% else %}
                                     <a href="/login/">
-                                        <button class="btn edit-btn">
-                                            Login to Save
-                                        </button>
+                                        <button class="btn edit-btn">Login to Save</button>
                                     </a>
                                 {% endif %}
 
                                 <a href="/share-video/{{ video.id }}/">
-                                    <button class="btn edit-btn">
-                                        Share
-                                    </button>
+                                    <button class="btn edit-btn">Share</button>
                                 </a>
 
                                 <a href="/report-video/{{ video.id }}/">
-                                   <button class="btn delete-btn">
-                                         Report
-                                   </button>
-                                   </a>
+                                    <button class="btn delete-btn">Report</button>
+                                </a>
 
                                 {% if user.is_authenticated %}
                                     {% if user.profile.account_type == "scout" or user.profile.account_type == "coach" %}
@@ -786,6 +753,27 @@
                     </div>
 
                 {% endfor %}
+
+                {% if videos.has_other_pages %}
+                    <div class="pagination">
+
+                        {% if videos.has_previous %}
+                            <a href="?page=1">First</a>
+                            <a href="?page={{ videos.previous_page_number }}">Previous</a>
+                        {% endif %}
+
+                        <span class="current">
+                            Page {{ videos.number }} of {{ videos.paginator.num_pages }}
+                        </span>
+
+                        {% if videos.has_next %}
+                            <a href="?page={{ videos.next_page_number }}">Next</a>
+                            <a href="?page={{ videos.paginator.num_pages }}">Last</a>
+                        {% endif %}
+
+                    </div>
+                {% endif %}
+
             {% else %}
                 <div class="video-box">
                     No videos uploaded yet.
@@ -821,6 +809,33 @@
         to videos, images, music, and text uploaded to the platform.
     </p>
 </footer>
+
+<script>
+    document.addEventListener("contextmenu", function(e) {
+        if (e.target.tagName === "VIDEO") {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener("mouseover", function(event) {
+        const video = event.target.closest(".preview-video");
+
+        if (video) {
+            video.play().catch(function(error) {
+                console.log("Preview autoplay blocked:", error);
+            });
+        }
+    });
+
+    document.addEventListener("mouseout", function(event) {
+        const video = event.target.closest(".preview-video");
+
+        if (video) {
+            video.pause();
+            video.currentTime = 0;
+        }
+    });
+</script>
 
 </body>
 </html>

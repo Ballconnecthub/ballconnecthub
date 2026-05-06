@@ -32,21 +32,20 @@ def validate_video_duration(video):
         raise ValidationError("Invalid video file.")
 
     finally:
-     video.seek(0)
+        video.seek(0)
 
-    if os.path.exists(temp_file.name):
-        os.remove(temp_file.name)
+        if os.path.exists(temp_file.name):
+            os.remove(temp_file.name)
 
 
 class Profile(models.Model):
     ACCOUNT_TYPES = (
-    ("admin", "Admin"),
-    ("player", "Player"),
-    ("fan", "Fan"),
-    ("scout", "Scout"),
-    ("coach", "Coach/Club"),
-)
-    
+        ("admin", "Admin"),
+        ("player", "Player"),
+        ("fan", "Fan"),
+        ("scout", "Scout"),
+        ("coach", "Coach/Club"),
+    )
 
     POSITIONS = (
         ("goalkeeper", "Goalkeeper"),
@@ -69,7 +68,6 @@ class Profile(models.Model):
         default="player"
     )
 
-    # COMMON FIELDS
     country = models.CharField(max_length=100, blank=True)
 
     profile_photo = models.ImageField(
@@ -85,23 +83,22 @@ class Profile(models.Model):
     )
 
     admin_role = models.CharField(
-    max_length=150,
-    blank=True,
-    default="Ballconnecthub Platform Administrator"
-)
+        max_length=150,
+        blank=True,
+        default="Ballconnecthub Platform Administrator"
+    )
 
     admin_access_level = models.CharField(
-    max_length=150,
-    blank=True,
-    default="Full Moderation Access"
-)
+        max_length=150,
+        blank=True,
+        default="Full Moderation Access"
+    )
 
     admin_permissions = models.TextField(
-    blank=True,
-    default="User moderation, video moderation, reports review, verification management, platform protection."
-)
+        blank=True,
+        default="User moderation, video moderation, reports review, verification management, platform protection."
+    )
 
-    # PLAYER FIELDS
     age = models.PositiveIntegerField(null=True, blank=True)
     position = models.CharField(max_length=50, choices=POSITIONS, blank=True)
     club_or_academy = models.CharField(max_length=150, blank=True)
@@ -109,14 +106,12 @@ class Profile(models.Model):
     strong_foot = models.CharField(max_length=20, choices=STRONG_FOOT, blank=True)
     football_cv = models.TextField(blank=True)
 
-    # SCOUT FIELDS
     scout_organization = models.CharField(max_length=150, blank=True)
     scout_region = models.CharField(max_length=150, blank=True)
     scout_experience = models.PositiveIntegerField(null=True, blank=True)
     scout_bio = models.TextField(blank=True)
     verified_scout = models.BooleanField(default=False)
 
-    # COACH / CLUB FIELDS
     club_name = models.CharField(max_length=150, blank=True)
     club_league = models.CharField(max_length=150, blank=True)
     academy_name = models.CharField(max_length=150, blank=True)
@@ -269,11 +264,13 @@ class ScoutInterest(models.Model):
 
 
 class ReportVideo(models.Model):
-    REASONS = (
-        ("copyright", "Copyright issue"),
-        ("inappropriate", "Inappropriate content"),
-        ("fake", "Fake player/video"),
-        ("abuse", "Abuse or harassment"),
+    REPORT_REASONS = (
+        ("spam", "Spam"),
+        ("copyright", "Copyright"),
+        ("fake", "Fake Account"),
+        ("violence", "Violence"),
+        ("abuse", "Abusive Content"),
+        ("inappropriate", "Inappropriate Content"),
         ("other", "Other"),
     )
 
@@ -291,55 +288,20 @@ class ReportVideo(models.Model):
 
     reason = models.CharField(
         max_length=50,
-        choices=REASONS
-    )
-
-    message = models.TextField(blank=True)
-
-    reviewed = models.BooleanField(default=False)
-
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f"{self.reporter.username} reported {self.video.title}"
-
-@receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.get_or_create(user=instance)
-
-class ReportVideo(models.Model):
-
-    REPORT_REASONS = (
-        ("spam", "Spam"),
-        ("copyright", "Copyright"),
-        ("fake", "Fake Account"),
-        ("violence", "Violence"),
-        ("abuse", "Abusive Content"),
-        ("other", "Other"),
-    )
-
-    reporter = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-
-    video = models.ForeignKey(
-        Video,
-        on_delete=models.CASCADE,
-        related_name="reports"
-    )
-
-    reason = models.CharField(
-        max_length=50,
         choices=REPORT_REASONS
     )
 
     message = models.TextField(blank=True)
 
-    created_at = models.DateTimeField(auto_now_add=True)
-
     resolved = models.BooleanField(default=False)
+
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.reporter.username} reported {self.video.title}"
+
+
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.get_or_create(user=instance)

@@ -11,6 +11,12 @@ from .forms import RegisterForm, VideoUploadForm
 from .models import Profile, Video, Like, Comment, SavedVideo, ScoutInterest, ReportVideo
 
 
+def paginate_queryset(request, queryset, per_page=6):
+    paginator = Paginator(queryset, per_page)
+    page_number = request.GET.get("page")
+    return paginator.get_page(page_number)
+
+
 def calculate_ranking_score(video):
     return (
         video.views +
@@ -24,10 +30,9 @@ def calculate_ranking_score(video):
 
 def home(request):
     query = request.GET.get("q", "")
-    page_number = request.GET.get("page", 1)
 
     videos = Video.objects.all().order_by("-created_at")
-    players = User.objects.filter(profile__account_type="player")
+    players = User.objects.filter(profile__account_type="player")[:20]
 
     if query:
         videos = videos.filter(
@@ -40,19 +45,19 @@ def home(request):
             Q(player__profile__club_or_academy__icontains=query)
         )
 
-        players = players.filter(
+        players = User.objects.filter(
+            profile__account_type="player"
+        ).filter(
             Q(username__icontains=query) |
             Q(profile__country__icontains=query) |
             Q(profile__position__icontains=query) |
             Q(profile__club_or_academy__icontains=query)
-        )
+        )[:20]
 
-    paginator = Paginator(videos, 6)
-    page_obj = paginator.get_page(page_number)
+    page_obj = paginate_queryset(request, videos, 6)
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
         html = render_to_string("video_feed_items.html", {"videos": page_obj})
-
         return JsonResponse({
             "html": html,
             "has_next": page_obj.has_next()
@@ -85,7 +90,6 @@ def register_view(request):
                 return redirect("profile_setup")
 
             return redirect("home")
-
     else:
         form = RegisterForm()
 
@@ -99,11 +103,7 @@ def login_view(request):
         username = request.POST["username"]
         password = request.POST["password"]
 
-        user = authenticate(
-            request,
-            username=username,
-            password=password
-        )
+        user = authenticate(request, username=username, password=password)
 
         if user:
             login(request, user)
@@ -150,7 +150,6 @@ def profile_setup(request):
             profile.club_bio = request.POST.get("club_bio", "")
 
         profile.save()
-
         return redirect("profile", username=request.user.username)
 
     return render(request, "profile_setup.html", {
@@ -162,13 +161,15 @@ def profile_view(request, username):
     profile_user = get_object_or_404(User, username=username)
     profile = profile_user.profile
 
-    videos = profile_user.videos.all().order_by("-created_at")
+    all_videos = profile_user.videos.all().order_by("-created_at")
+    page_obj = paginate_queryset(request, all_videos, 6)
 
-    for video in videos:
+    for video in page_obj:
         video.ranking_score_value = calculate_ranking_score(video)
 
-    total_likes = sum(video.likes.count() for video in videos)
-    total_views = sum(video.views for video in videos)
+    total_likes = sum(video.likes.count() for video in all_videos)
+    total_views = sum(video.views for video in all_videos)
+    shared_videos_count = sum(video.shares for video in all_videos)
 
     scout_interests_count = ScoutInterest.objects.filter(
         scout=profile_user
@@ -178,12 +179,10 @@ def profile_view(request, username):
         user=profile_user
     ).count()
 
-    shared_videos_count = sum(video.shares for video in videos)
-
     return render(request, "profile.html", {
         "profile_user": profile_user,
         "profile": profile,
-        "videos": videos,
+        "videos": page_obj,
         "total_likes": total_likes,
         "total_views": total_views,
         "scout_interests_count": scout_interests_count,
@@ -245,7 +244,6 @@ def edit_profile(request):
             profile.club_bio = request.POST.get("club_bio", "")
 
         profile.save()
-
         return redirect("profile", username=request.user.username)
 
     return render(request, "edit_profile.html", {
@@ -276,9 +274,7 @@ def upload_video(request):
             video = form.save(commit=False)
             video.player = request.user
             video.save()
-
             return redirect("profile", username=request.user.username)
-
     else:
         form = VideoUploadForm()
 
@@ -323,14 +319,14 @@ def watch_video(request, video_id):
     video = get_object_or_404(Video, id=video_id)
 
     video.views += 1
-    video.save()
+    video.save(update_fields=["views"])
 
     recommended_videos = Video.objects.exclude(id=video.id).filter(
         category=video.category
-    )[:6]
+    ).order_by("-created_at")[:6]
 
     if not recommended_videos:
-        recommended_videos = Video.objects.exclude(id=video.id)[:6]
+        recommended_videos = Video.objects.exclude(id=video.id).order_by("-created_at")[:6]
 
     for recommended in recommended_videos:
         recommended.ranking_score_value = calculate_ranking_score(recommended)
@@ -356,16 +352,15 @@ def delete_video(request, video_id):
         "video": video
     })
 
+
 @login_required
 def edit_video(request, video_id):
-
     video = get_object_or_404(Video, id=video_id)
 
     if video.player != request.user:
         return redirect("profile", username=video.player.username)
 
     if request.method == "POST":
-
         video.title = request.POST.get("title")
         video.description = request.POST.get("description")
         video.category = request.POST.get("category")
@@ -377,7 +372,6 @@ def edit_video(request, video_id):
             video.thumbnail = request.FILES.get("thumbnail")
 
         video.save()
-
         return redirect("profile", username=request.user.username)
 
     return render(request, "edit_video.html", {
@@ -405,7 +399,7 @@ def share_video(request, video_id):
     video = get_object_or_404(Video, id=video_id)
 
     video.shares += 1
-    video.save()
+    video.save(update_fields=["shares"])
 
     return render(request, "share_video.html", {
         "video": video
@@ -431,23 +425,20 @@ def scout_interest(request, video_id):
 
 
 def trending_videos(request):
-    videos = list(Video.objects.all())
+    videos = Video.objects.all().order_by("-views", "-created_at")
+    page_obj = paginate_queryset(request, videos, 6)
 
-    for video in videos:
+    for video in page_obj:
         video.ranking_score_value = calculate_ranking_score(video)
 
-    videos = sorted(
-        videos,
-        key=lambda video: video.ranking_score_value,
-        reverse=True
-    )
-
     return render(request, "trending.html", {
-        "videos": videos
+        "videos": page_obj
     })
+
 
 def football_news(request):
     return render(request, "football_news.html")
+
 
 def football_news_article(request, slug):
     articles = {
@@ -497,6 +488,7 @@ A player who understands the game can stand out even when they are not scoring g
         "article": article
     })
 
+
 @login_required
 def moderation_dashboard(request):
     if not request.user.is_staff:
@@ -505,10 +497,14 @@ def moderation_dashboard(request):
     videos = Video.objects.all().order_by("-created_at")
     reports = ReportVideo.objects.all().order_by("-created_at")
 
+    video_page = paginate_queryset(request, videos, 10)
+    report_page = paginate_queryset(request, reports, 10)
+
     return render(request, "moderation_dashboard.html", {
-        "videos": videos,
-        "reports": reports,
+        "videos": video_page,
+        "reports": report_page,
     })
+
 
 @login_required
 def report_video(request, video_id):

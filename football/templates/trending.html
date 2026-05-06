@@ -106,6 +106,10 @@
             display: block;
         }
 
+        .preview-video {
+            cursor: pointer;
+        }
+
         .video-info {
             margin-top: 10px;
         }
@@ -202,6 +206,45 @@
             box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
         }
 
+        .pagination {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a,
+        .pagination span {
+            background: white;
+            color: #0A66C2;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+        }
+
+        .pagination .current {
+            background: #0A66C2;
+            color: white;
+        }
+
+        footer {
+            background:#0A66C2;
+            color:white;
+            padding:25px;
+            text-align:center;
+            margin-top:40px;
+        }
+
+        footer a {
+            color:white;
+            margin:0 10px;
+            text-decoration:none;
+        }
+
         @media (max-width: 1000px) {
             .video-grid {
                 grid-template-columns: repeat(2, minmax(260px, 1fr));
@@ -229,7 +272,7 @@
     <div class="nav">
         <a href="/">Home</a>
         <a href="/trending/">🔥 Trending</a>
-       <a href="/football-news/">Football News</a>
+        <a href="/football-news/">Football News</a>
     </div>
 </div>
 
@@ -247,31 +290,35 @@
 
                 <div class="video-card">
 
-                    {% if forloop.counter == 1 %}
-                        <div class="rank-badge rank-1">🟢 #1 Trending</div>
-                    {% elif forloop.counter == 2 %}
-                        <div class="rank-badge rank-2">🔵 #2 Trending</div>
-                    {% elif forloop.counter == 3 %}
-                        <div class="rank-badge rank-3">🟣 #3 Trending</div>
-                    {% elif forloop.counter <= 5 %}
-                        <div class="rank-badge rank-4">🟠 #{{ forloop.counter }} Trending</div>
-                    {% else %}
-                        <div class="rank-badge rank-other">🔴 #{{ forloop.counter }} Trending</div>
-                    {% endif %}
+                    {% with rank=forloop.counter0|add:videos.start_index %}
+
+                        {% if rank == 1 %}
+                            <div class="rank-badge rank-1">🟢 #1 Trending</div>
+                        {% elif rank == 2 %}
+                            <div class="rank-badge rank-2">🔵 #2 Trending</div>
+                        {% elif rank == 3 %}
+                            <div class="rank-badge rank-3">🟣 #3 Trending</div>
+                        {% elif rank <= 5 %}
+                            <div class="rank-badge rank-4">🟠 #{{ rank }} Trending</div>
+                        {% else %}
+                            <div class="rank-badge rank-other">🔴 #{{ rank }} Trending</div>
+                        {% endif %}
+
+                    {% endwith %}
 
                     <div class="video-player-wrap">
                         <video
-    class="football-video preview-video"
-    controls
-    muted
-    preload="metadata"
-    controlsList="nodownload"
-    disablePictureInPicture
-    oncontextmenu="return false;"
->
-    <source src="{{ video.video_file.url }}">
-    Your browser does not support the video tag.
-</video>
+                            class="football-video preview-video"
+                            controls
+                            muted
+                            preload="metadata"
+                            controlsList="nodownload"
+                            disablePictureInPicture
+                            oncontextmenu="return false;"
+                        >
+                            <source src="{{ video.video_file.url }}">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
 
                     <div class="video-info">
@@ -300,7 +347,7 @@
                         <div>
                             <a href="/profile/{{ video.player.username }}/">
                                 {{ video.player.username }}
-{% include "verified_badge.html" with profile_obj=video.player.profile %}
+                                {% include "verified_badge.html" with profile_obj=video.player.profile %}
                             </a>
 
                             <div class="meta">
@@ -333,6 +380,26 @@
 
         </div>
 
+        {% if videos.has_other_pages %}
+            <div class="pagination">
+
+                {% if videos.has_previous %}
+                    <a href="?page=1">First</a>
+                    <a href="?page={{ videos.previous_page_number }}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ videos.number }} of {{ videos.paginator.num_pages }}
+                </span>
+
+                {% if videos.has_next %}
+                    <a href="?page={{ videos.next_page_number }}">Next</a>
+                    <a href="?page={{ videos.paginator.num_pages }}">Last</a>
+                {% endif %}
+
+            </div>
+        {% endif %}
+
     {% else %}
 
         <div class="empty">
@@ -343,13 +410,7 @@
 
 </div>
 
-<footer style="
-    background:#0A66C2;
-    color:white;
-    padding:25px;
-    text-align:center;
-    margin-top:40px;
-">
+<footer>
     <p style="font-weight:bold; margin-bottom:10px;">
         ⚽ Ballconnecthub
     </p>
@@ -359,11 +420,11 @@
     </p>
 
     <div style="margin-top:15px;">
-        <a href="/impressum/" style="color:white; margin:0 10px;">Legal Notice</a>
-        <a href="/privacy/" style="color:white; margin:0 10px;">Privacy Policy</a>
-        <a href="/terms/" style="color:white; margin:0 10px;">Terms & Conditions</a>
-        <a href="/copyright/" style="color:white; margin:0 10px;">Copyright</a>
-        <a href="/cookies/" style="color:white; margin:0 10px;">Cookie Settings</a>
+        <a href="/impressum/">Legal Notice</a>
+        <a href="/privacy/">Privacy Policy</a>
+        <a href="/terms/">Terms & Conditions</a>
+        <a href="/copyright/">Copyright</a>
+        <a href="/cookies/">Cookie Settings</a>
     </div>
 
     <p style="font-size:13px; margin-top:18px;">
@@ -372,6 +433,33 @@
         to videos, images, music, and text uploaded to the platform.
     </p>
 </footer>
+
+<script>
+    document.addEventListener("contextmenu", function(e) {
+        if (e.target.tagName === "VIDEO") {
+            e.preventDefault();
+        }
+    });
+
+    document.addEventListener("mouseover", function(event) {
+        const video = event.target.closest(".preview-video");
+
+        if (video) {
+            video.play().catch(function(error) {
+                console.log("Preview autoplay blocked:", error);
+            });
+        }
+    });
+
+    document.addEventListener("mouseout", function(event) {
+        const video = event.target.closest(".preview-video");
+
+        if (video) {
+            video.pause();
+            video.currentTime = 0;
+        }
+    });
+</script>
 
 </body>
 </html>

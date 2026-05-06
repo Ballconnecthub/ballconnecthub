@@ -38,6 +38,7 @@
             border-radius: 14px;
             margin-bottom: 25px;
             box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
+            overflow-x: auto;
         }
 
         h1, h2 {
@@ -94,9 +95,39 @@
             background: #dc2626;
         }
 
+        .pagination {
+            margin: 25px 0 5px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a,
+        .pagination span {
+            background: white;
+            color: #0A66C2;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+        }
+
+        .pagination .current {
+            background: #0A66C2;
+            color: white;
+        }
+
         @media(max-width: 700px) {
             table {
                 font-size: 13px;
+            }
+
+            .navbar {
+                flex-direction: column;
+                gap: 10px;
             }
         }
     </style>
@@ -148,17 +179,31 @@
                         </td>
 
                         <td>
-                            <a class="btn" href="/video/{{ report.video.id }}/">
-                                Watch
-                            </a>
-
-                            <a class="btn delete-btn" href="/delete-video/{{ report.video.id }}/">
-                                Delete
-                            </a>
+                            <a class="btn" href="/video/{{ report.video.id }}/">Watch</a>
+                            <a class="btn delete-btn" href="/delete-video/{{ report.video.id }}/">Delete</a>
                         </td>
                     </tr>
                 {% endfor %}
             </table>
+
+            {% if reports.has_other_pages %}
+                <div class="pagination">
+
+                    {% if reports.has_previous %}
+                        <a href="?page={{ reports.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Reports Page {{ reports.number }} of {{ reports.paginator.num_pages }}
+                    </span>
+
+                    {% if reports.has_next %}
+                        <a href="?page={{ reports.next_page_number }}">Next</a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
         {% else %}
             <p>No reports yet.</p>
         {% endif %}
@@ -185,17 +230,31 @@
                         <td>{{ video.likes.count }}</td>
 
                         <td>
-                            <a class="btn" href="/video/{{ video.id }}/">
-                                Watch
-                            </a>
-
-                            <a class="btn delete-btn" href="/delete-video/{{ video.id }}/">
-                                Delete
-                            </a>
+                            <a class="btn" href="/video/{{ video.id }}/">Watch</a>
+                            <a class="btn delete-btn" href="/delete-video/{{ video.id }}/">Delete</a>
                         </td>
                     </tr>
                 {% endfor %}
             </table>
+
+            {% if videos.has_other_pages %}
+                <div class="pagination">
+
+                    {% if videos.has_previous %}
+                        <a href="?page={{ videos.previous_page_number }}">Previous</a>
+                    {% endif %}
+
+                    <span class="current">
+                        Videos Page {{ videos.number }} of {{ videos.paginator.num_pages }}
+                    </span>
+
+                    {% if videos.has_next %}
+                        <a href="?page={{ videos.next_page_number }}">Next</a>
+                    {% endif %}
+
+                </div>
+            {% endif %}
+
         {% else %}
             <p>No videos uploaded yet.</p>
         {% endif %}

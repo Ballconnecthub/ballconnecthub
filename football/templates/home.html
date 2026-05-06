@@ -188,6 +188,35 @@
             text-align: center;
         }
 
+        .pagination {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a,
+        .pagination span {
+            background: white;
+            color: #0A66C2;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+        }
+
+        .pagination .current {
+            background: #0A66C2;
+            color: white;
+        }
+
+        .preview-video {
+            cursor: pointer;
+        }
+
         @media (max-width: 1000px) {
             #video-feed {
                 grid-template-columns: repeat(2, minmax(260px, 1fr));
@@ -204,10 +233,6 @@
                 grid-template-columns: 1fr;
             }
         }
-
-        .preview-video {
-    cursor: pointer;
-}
     </style>
 </head>
 
@@ -285,9 +310,23 @@
             {% include "video_feed_items.html" %}
         </div>
 
-        {% if has_next %}
-            <div id="loading" style="text-align:center; padding:20px; color:#555; font-weight:bold;">
-                Loading more videos...
+        {% if videos.has_other_pages %}
+            <div class="pagination">
+
+                {% if videos.has_previous %}
+                    <a href="?page=1{% if query %}&q={{ query }}{% endif %}">First</a>
+                    <a href="?page={{ videos.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ videos.number }} of {{ videos.paginator.num_pages }}
+                </span>
+
+                {% if videos.has_next %}
+                    <a href="?page={{ videos.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                    <a href="?page={{ videos.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Last</a>
+                {% endif %}
+
             </div>
         {% endif %}
 
@@ -309,37 +348,6 @@
 </div>
 
 <script>
-    let page = 2;
-    let loading = false;
-    let hasNext = "{{ has_next|yesno:'true,false' }}" === "true";
-    const query = "{{ query }}";
-
-    window.addEventListener("scroll", function () {
-        if (loading || !hasNext) return;
-
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 400) {
-            loading = true;
-
-            fetch(`/?page=${page}&q=${encodeURIComponent(query)}`, {
-                headers: {
-                    "X-Requested-With": "XMLHttpRequest"
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("video-feed").insertAdjacentHTML("beforeend", data.html);
-
-                hasNext = data.has_next;
-                page += 1;
-                loading = false;
-
-                if (!hasNext && document.getElementById("loading")) {
-                    document.getElementById("loading").innerText = "No more videos";
-                }
-            });
-        }
-    });
-
     document.addEventListener("contextmenu", function(e) {
         if (e.target.tagName === "VIDEO") {
             e.preventDefault();
@@ -347,25 +355,24 @@
     });
 
     document.addEventListener("mouseover", function(event) {
-    const video = event.target.closest(".preview-video");
+        const video = event.target.closest(".preview-video");
 
-    if (video) {
-        video.play().catch(function(error) {
-            console.log("Preview autoplay blocked:", error);
-        });
-    }
-});
+        if (video) {
+            video.play().catch(function(error) {
+                console.log("Preview autoplay blocked:", error);
+            });
+        }
+    });
 
-document.addEventListener("mouseout", function(event) {
-    const video = event.target.closest(".preview-video");
+    document.addEventListener("mouseout", function(event) {
+        const video = event.target.closest(".preview-video");
 
-    if (video) {
-        video.pause();
-        video.currentTime = 0;
-    }
-});
+        if (video) {
+            video.pause();
+            video.currentTime = 0;
+        }
+    });
 </script>
-
 
 </body>
 </html>
