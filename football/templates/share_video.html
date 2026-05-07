@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>Share Video - Ballconnecthub</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,17 +24,25 @@
 
         h2 {
             color: #0A66C2;
+            margin-bottom: 10px;
         }
 
-        input {
+        .video-title {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #shareLink {
             width: 100%;
             padding: 12px;
             border: 1px solid #ccc;
             border-radius: 8px;
             margin-top: 15px;
+            font-size: 14px;
+            box-sizing: border-box;
         }
 
-        button {
+        .btn {
             margin-top: 15px;
             background: #0A66C2;
             color: white;
@@ -40,14 +51,15 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            font-size: 14px;
         }
 
-        button:hover {
+        .btn:hover {
             background: #084a9e;
         }
 
         .back {
-            display: block;
+            display: inline-block;
             margin-top: 20px;
             color: #0A66C2;
             font-weight: bold;
@@ -56,40 +68,55 @@
 
         .message {
             color: #16A34A;
-            margin-top: 10px;
+            margin-top: 12px;
             font-weight: bold;
             display: none;
         }
     </style>
 </head>
+
 <body>
 
 <div class="container">
-    <h2>Share This Football Video</h2>
 
-    <p><strong>{{ video.title }}</strong></p>
+    <h2>⚽ Share This Football Video</h2>
 
-    <input 
-        type="text" 
+    <p class="video-title">
+        <strong>{{ video.title }}</strong>
+    </p>
+
+    <input
         id="shareLink"
-        value="http://127.0.0.1:8080/video/{{ video.id }}/"
+        type="text"
+        value="{{ share_link }}"
         readonly
     >
 
-    <button onclick="copyLink()">Copy Link</button>
+    <br>
+
+    <button class="btn" onclick="copyLink()">
+        Copy Link
+    </button>
 
     <div id="copyMessage" class="message">
-        Link copied!
+        ✅ Link copied successfully!
     </div>
 
-    <a class="back" href="/video/{{ video.id }}/">Back to Video</a>
+    <br>
+
+    <a class="back" href="/video/{{ video.id }}/">
+        ← Back to Video
+    </a>
+
 </div>
 
 <script>
     function copyLink() {
         const link = document.getElementById("shareLink");
+
         link.select();
         link.setSelectionRange(0, 99999);
+
         navigator.clipboard.writeText(link.value);
 
         document.getElementById("copyMessage").style.display = "block";

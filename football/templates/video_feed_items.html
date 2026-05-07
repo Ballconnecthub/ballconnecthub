@@ -7,7 +7,7 @@
     class="football-video preview-video"
     controls
     muted
-    preload="metadata"
+    preload="none"
     controlsList="nodownload"
     disablePictureInPicture
     oncontextmenu="return false;"
@@ -31,7 +31,7 @@
 
     <div class="player-row">
         {% if video.player.profile.profile_photo %}
-            <img class="player-photo" src="{{ video.player.profile.profile_photo.url }}">
+           <img loading="lazy" class="player-photo" src="{{ video.player.profile.profile_photo.url }}">
         {% else %}
             <div class="player-placeholder">⚽</div>
         {% endif %}

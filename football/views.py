@@ -401,8 +401,11 @@ def share_video(request, video_id):
     video.shares += 1
     video.save(update_fields=["shares"])
 
+    share_link = f"https://www.ballconnecthub.com/video/{video.id}/"
+
     return render(request, "share_video.html", {
-        "video": video
+        "video": video,
+        "share_link": share_link,
     })
 
 
