@@ -8,11 +8,12 @@
             controls
             muted
             preload="none"
+            poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
             controlsList="nodownload"
             disablePictureInPicture
             oncontextmenu="return false;"
         >
-            <source src="{{ video.video_file.url }}">
+            <source src="{{ video.video_file.url }}" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
