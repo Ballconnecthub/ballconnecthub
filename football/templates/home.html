@@ -233,6 +233,101 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .mobile-feed-card {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 22px;
+}
+
+.mobile-video-wrap {
+    width: 100%;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile-feed-video {
+    width: 100%;
+    max-height: 620px;
+    object-fit: contain;
+    border-radius: 0;
+}
+
+.mobile-feed-content {
+    padding: 14px;
+}
+
+.mobile-player-row {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.mobile-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.mobile-actions span {
+    background: #f0f4fa;
+    padding: 8px 10px;
+    border-radius: 999px;
+}
+
+.mobile-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.mobile-buttons .btn {
+    flex: 1;
+    text-align: center;
+}
+
+.watch-btn {
+    background: #0A66C2;
+}
+
+.profile-btn {
+    background: #16A34A;
+}
+
+@media (max-width: 650px) {
+    .container {
+        max-width: 100%;
+        width: 100%;
+        margin: 0;
+    }
+
+    .hero {
+        border-radius: 0;
+        margin-bottom: 10px;
+    }
+
+    #video-feed {
+        display: block;
+    }
+
+    .mobile-feed-card {
+        margin: 0 0 14px 0;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .mobile-feed-video {
+        max-height: 75vh;
+    }
+
+    .mobile-buttons {
+        flex-direction: column;
+    }
+}
     </style>
 </head>
 
