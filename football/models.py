@@ -179,6 +179,26 @@ class Video(models.Model):
         ]
 
     @property
+    def display_thumbnail_url(self):
+        if self.thumbnail:
+            return self.thumbnail.url
+
+        if self.video_file:
+            video_url = self.video_file.url
+
+            if "/video/upload/" in video_url:
+                thumbnail_url = video_url.replace(
+                    "/video/upload/",
+                    "/video/upload/so_1,w_800,c_fit/"
+                )
+
+                thumbnail_url = thumbnail_url.rsplit(".", 1)[0] + ".jpg"
+
+                return thumbnail_url
+
+        return ""
+
+    @property
     def ranking_score(self):
         return (
             self.views +

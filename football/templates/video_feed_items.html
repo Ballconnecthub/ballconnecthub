@@ -8,7 +8,7 @@
             controls
             muted
             preload="none"
-            poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
+            poster="{{ video.display_thumbnail_url }}"
             controlsList="nodownload"
             disablePictureInPicture
             oncontextmenu="return false;"
