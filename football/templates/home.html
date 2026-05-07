@@ -238,25 +238,39 @@
     padding: 0;
     overflow: hidden;
     border-radius: 22px;
+    background: white;
 }
 
 .mobile-video-wrap {
     width: 100%;
-    background: #000;
+    background: white;
     display: flex;
     justify-content: center;
     align-items: center;
+    border-radius: 22px 22px 0 0;
+    overflow: hidden;
 }
 
 .mobile-feed-video {
     width: 100%;
     max-height: 620px;
     object-fit: contain;
-    border-radius: 0;
+    background: white !important;
+    border-radius: 22px 22px 0 0;
+    display: block;
+}
+
+video {
+    background: white !important;
+}
+
+.football-video {
+    background: white !important;
 }
 
 .mobile-feed-content {
     padding: 14px;
+    background: white;
 }
 
 .mobile-player-row {
@@ -320,8 +334,13 @@
         box-shadow: none;
     }
 
+    .mobile-video-wrap {
+        border-radius: 0;
+    }
+
     .mobile-feed-video {
         max-height: 75vh;
+        border-radius: 0;
     }
 
     .mobile-buttons {
