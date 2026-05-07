@@ -119,6 +119,13 @@ class Profile(models.Model):
     club_bio = models.TextField(blank=True)
     verified_club = models.BooleanField(default=False)
 
+    class Meta:
+        indexes = [
+            models.Index(fields=["account_type"]),
+            models.Index(fields=["country"]),
+            models.Index(fields=["position"]),
+            models.Index(fields=["club_or_academy"]),
+        ]
     def __str__(self):
         return self.user.username
 
@@ -161,6 +168,15 @@ class Video(models.Model):
     views = models.PositiveIntegerField(default=0)
     shares = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["category"]),
+            models.Index(fields=["views"]),
+            models.Index(fields=["player"]),
+            models.Index(fields=["title"]),
+        ]
 
     @property
     def ranking_score(self):
@@ -296,6 +312,15 @@ class ReportVideo(models.Model):
     resolved = models.BooleanField(default=False)
 
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["resolved"]),
+            models.Index(fields=["reason"]),
+            models.Index(fields=["video"]),
+            models.Index(fields=["reporter"]),
+        ]
 
     def __str__(self):
         return f"{self.reporter.username} reported {self.video.title}"
