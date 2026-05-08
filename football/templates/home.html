@@ -11,6 +11,12 @@
             background: #f4f7fb;
         }
 
+        video {
+            -webkit-user-select: none;
+            user-select: none;
+            background: white;
+        }
+
         .navbar {
             background: #0A66C2;
             color: white;
@@ -75,75 +81,30 @@
 
         .feed-card {
             background: white;
-            border-radius: 22px;
+            border-radius: 14px;
+            padding: 12px;
             box-shadow: 0px 5px 20px rgba(0,0,0,0.08);
-            overflow: hidden;
         }
 
-        .mobile-video-wrap {
+        .video-player-wrap {
             width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             background: white;
-            border-radius: 22px 22px 0 0;
+            border-radius: 12px;
             overflow: hidden;
         }
 
-        .thumbnail-link {
-            width: 100%;
-            height: 260px;
+        .football-video {
+            max-width: 100%;
+            width: auto;
+            height: auto;
+            max-height: 520px;
+            border-radius: 10px;
             background: white;
             display: block;
-            position: relative;
-            overflow: hidden;
-            border-radius: 22px 22px 0 0;
-            text-decoration: none;
-        }
-
-        .video-thumbnail {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            background: white;
-        }
-
-        .play-overlay {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(10, 102, 194, 0.9);
-            color: white;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            padding-left: 4px;
-        }
-
-        .fallback-thumbnail {
-            background: #f4f7fb;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #0A66C2;
-        }
-
-        .fallback-icon {
-            font-size: 46px;
-        }
-
-        .fallback-text {
-            margin-top: 8px;
-            font-weight: bold;
-        }
-
-        .mobile-feed-content {
-            padding: 14px;
-            background: white;
+            object-fit: contain;
         }
 
         .video-info {
@@ -172,8 +133,7 @@
             display: flex;
             align-items: center;
             gap: 9px;
-            margin-top: 0;
-            margin-bottom: 10px;
+            margin-top: 10px;
         }
 
         .player-photo,
@@ -201,49 +161,26 @@
             text-decoration: none;
         }
 
-        .mobile-actions {
-            margin-top: 12px;
+        .stats {
+            margin-top: 10px;
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: bold;
-        }
-
-        .mobile-actions span {
-            background: #f0f4fa;
-            padding: 8px 10px;
-            border-radius: 999px;
-        }
-
-        .mobile-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 12px;
+            color: #1F2937;
         }
 
         .btn {
             display: inline-block;
+            margin-top: 10px;
             background: #0A66C2;
             color: white;
-            padding: 9px 12px;
+            padding: 8px 12px;
             border-radius: 8px;
             text-decoration: none;
             font-weight: bold;
             font-size: 13px;
-        }
-
-        .mobile-buttons .btn {
-            flex: 1;
-            text-align: center;
-        }
-
-        .watch-btn {
-            background: #0A66C2;
-        }
-
-        .profile-btn {
-            background: #16A34A;
         }
 
         .empty {
@@ -303,38 +240,8 @@
                 gap: 10px;
             }
 
-            .container {
-                max-width: 100%;
-                width: 100%;
-                margin: 0;
-            }
-
-            .hero {
-                border-radius: 0;
-                margin-bottom: 10px;
-            }
-
             #video-feed {
-                display: block;
-            }
-
-            .feed-card {
-                margin: 0 0 14px 0;
-                border-radius: 0;
-                box-shadow: none;
-            }
-
-            .mobile-video-wrap,
-            .thumbnail-link {
-                border-radius: 0;
-            }
-
-            .thumbnail-link {
-                height: 340px;
-            }
-
-            .mobile-buttons {
-                flex-direction: column;
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -385,7 +292,7 @@
     </div>
 
     {% if query %}
-        <div class="feed-card" style="margin-bottom:18px; padding:16px;">
+        <div class="feed-card" style="margin-bottom:18px;">
             <h3>Search results for "{{ query }}"</h3>
 
             <h4>Players</h4>

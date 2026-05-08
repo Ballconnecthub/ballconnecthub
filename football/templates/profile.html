@@ -5,372 +5,320 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: #f4f7fb;
-        margin: 0;
-    }
-
-    .navbar {
-        background: #0A66C2;
-        padding: 15px 25px;
-        color: white;
-        font-size: 22px;
-        font-weight: bold;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .navbar a {
-        color: white;
-        text-decoration: none;
-        font-size: 16px;
-        background: rgba(255,255,255,0.15);
-        padding: 8px 14px;
-        border-radius: 6px;
-    }
-
-    .container {
-        width: 850px;
-        max-width: 95%;
-        margin: 30px auto;
-        background: white;
-        border-radius: 12px;
-        padding: 30px;
-        box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
-    }
-
-    .profile-header {
-        text-align: center;
-        margin-bottom: 30px;
-    }
-
-    .profile-header h1 {
-        color: #0A66C2;
-        margin-bottom: 5px;
-    }
-
-    .account-type {
-        color: #16A34A;
-        font-weight: bold;
-    }
-
-    .section {
-        margin-bottom: 25px;
-    }
-
-    .section h3 {
-        color: #0A66C2;
-        border-bottom: 2px solid #0A66C2;
-        padding-bottom: 5px;
-    }
-
-    .info {
-        margin: 8px 0;
-        font-size: 16px;
-    }
-
-    .stats {
-        display: flex;
-        gap: 20px;
-        flex-wrap: wrap;
-        margin-top: 15px;
-    }
-
-    .stat-box {
-        background: #f0f4fa;
-        padding: 15px;
-        border-radius: 10px;
-        flex: 1;
-        min-width: 150px;
-        text-align: center;
-    }
-
-    .stat-box h2 {
-        color: #0A66C2;
-        margin: 0;
-    }
-
-    .btn {
-        color: white;
-        border: none;
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 14px;
-        cursor: pointer;
-        margin: 5px 0;
-        width: 100%;
-    }
-
-    .contact-btn {
-        background: #16A34A;
-    }
-
-    .edit-btn {
-        background: #0A66C2;
-    }
-
-    .delete-btn {
-        background: #dc2626;
-    }
-
-    .top-action-btn {
-        display: inline-block;
-        color: white;
-        text-decoration: none;
-        padding: 10px 14px;
-        border-radius: 8px;
-        font-size: 14px;
-        margin: 5px;
-        font-weight: bold;
-    }
-
-    .edit-action {
-        background: #0A66C2;
-    }
-
-    .upload-action {
-        background: #16A34A;
-    }
-
-    .admin-action {
-        background: #7c3aed;
-    }
-
-    .admin-badge {
-        display: inline-block;
-        background: #dbeafe;
-        color: #1d4ed8;
-        padding: 8px 14px;
-        border-radius: 30px;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    .verified-scout {
-        display: inline-block;
-        background: #dcfce7;
-        color: #166534;
-        padding: 8px 14px;
-        border-radius: 30px;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    .verified-club {
-        display: inline-block;
-        background: #dbeafe;
-        color: #1d4ed8;
-        padding: 8px 14px;
-        border-radius: 30px;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-
-    .not-verified {
-        display: inline-block;
-        background: #f3f4f6;
-        color: #666;
-        padding: 8px 14px;
-        border-radius: 30px;
-        margin-top: 10px;
-    }
-
-    .video-box {
-        background: #f9fafc;
-        padding: 20px;
-        border-radius: 10px;
-        text-align: left;
-        color: #555;
-        margin-bottom: 20px;
-        scroll-margin-top: 90px;
-    }
-
-    .video-layout {
-        display: flex;
-        gap: 16px;
-        align-items: flex-start;
-        justify-content: center;
-    }
-
-    .video-main {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .video-player-wrap {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: white;
-        padding: 6px 10px;
-        border-radius: 12px;
-    }
-
-    .profile-thumbnail-link {
-        width: 100%;
-        max-width: 520px;
-        height: 320px;
-        background: white;
-        display: block;
-        position: relative;
-        overflow: hidden;
-        border-radius: 12px;
-        text-decoration: none;
-    }
-
-    .profile-video-thumbnail {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-        background: white;
-    }
-
-    .profile-play-overlay {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(10, 102, 194, 0.9);
-        color: white;
-        width: 58px;
-        height: 58px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 26px;
-        padding-left: 4px;
-    }
-
-    .profile-fallback-thumbnail {
-        background: #f4f7fb;
-        color: #0A66C2;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .football-video {
-        max-height: 520px;
-        max-width: 100%;
-        width: auto;
-        border-radius: 10px;
-        background: white;
-        margin-bottom: 2px;
-    }
-
-    .preview-video {
-        cursor: pointer;
-    }
-
-    .video-actions-side {
-        width: 150px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        align-items: stretch;
-        position: sticky;
-        top: 90px;
-    }
-
-    .video-stats {
-        background: white;
-        border-radius: 10px;
-        padding: 10px;
-        font-size: 13px;
-        line-height: 1.5;
-    }
-
-    .comments-box {
-        margin-top: 20px;
-    }
-
-    .comment-card {
-        background: #f0f4fa;
-        padding: 10px;
-        border-radius: 8px;
-        margin-top: 10px;
-    }
-
-    .pagination {
-        margin: 30px 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-    }
-
-    .pagination a,
-    .pagination span {
-        background: white;
-        color: #0A66C2;
-        padding: 10px 14px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: bold;
-        box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
-    }
-
-    .pagination .current {
-        background: #0A66C2;
-        color: white;
-    }
-
-    footer {
-        background:#0A66C2;
-        color:white;
-        padding:25px;
-        text-align:center;
-        margin-top:40px;
-    }
-
-    footer a {
-        color:white;
-        margin:0 10px;
-        text-decoration:none;
-    }
-
-    @media (max-width: 700px) {
-        .container {
-            padding: 20px;
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            margin: 0;
         }
 
-        .stats {
-            flex-direction: column;
-        }
-
-        .video-layout {
-            flex-direction: column;
+        .navbar {
+            background: #0A66C2;
+            padding: 15px 25px;
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .video-actions-side {
-            width: 100%;
-            flex-direction: row;
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 14px;
+            border-radius: 6px;
+        }
+
+        .container {
+            width: 850px;
+            max-width: 95%;
+            margin: 30px auto;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0px 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .profile-header h1 {
+            color: #0A66C2;
+            margin-bottom: 5px;
+        }
+
+        .account-type {
+            color: #16A34A;
+            font-weight: bold;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section h3 {
+            color: #0A66C2;
+            border-bottom: 2px solid #0A66C2;
+            padding-bottom: 5px;
+        }
+
+        .info {
+            margin: 8px 0;
+            font-size: 16px;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
             flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: #f0f4fa;
+            padding: 15px;
+            border-radius: 10px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .stat-box h2 {
+            color: #0A66C2;
+            margin: 0;
+        }
+
+        .btn {
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px 0;
+            width: 100%;
+        }
+
+        .contact-btn {
+            background: #16A34A;
+        }
+
+        .edit-btn {
+            background: #0A66C2;
+        }
+
+        .delete-btn {
+            background: #dc2626;
+        }
+
+        .top-action-btn {
+            display: inline-block;
+            color: white;
+            text-decoration: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .edit-action {
+            background: #0A66C2;
+        }
+
+        .upload-action {
+            background: #16A34A;
+        }
+
+        .admin-action {
+            background: #7c3aed;
+        }
+
+        .admin-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .verified-scout {
+            display: inline-block;
+            background: #dcfce7;
+            color: #166534;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .verified-club {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .not-verified {
+            display: inline-block;
+            background: #f3f4f6;
+            color: #666;
+            padding: 8px 14px;
+            border-radius: 30px;
+            margin-top: 10px;
+        }
+
+        .video-box {
+            background: #f9fafc;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            color: #555;
+            margin-bottom: 20px;
+            scroll-margin-top: 90px;
+        }
+
+        .video-layout {
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
             justify-content: center;
-            position: static;
         }
 
-        .video-actions-side a,
-        .video-actions-side form {
-            width: 45%;
+        .video-main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .profile-thumbnail-link {
-            height: 260px;
+        .video-player-wrap {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f9fafc;
+            padding: 6px 10px;
+        }
+
+        .football-video {
+            max-height: 520px;
             max-width: 100%;
+            width: auto;
+            border-radius: 10px;
+            background: transparent;
+            margin-bottom: 2px;
         }
-    }
-</style>
+
+        .preview-video {
+            cursor: pointer;
+        }
+
+        .video-actions-side {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: stretch;
+            position: sticky;
+            top: 90px;
+        }
+
+        .video-stats {
+            background: white;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .comments-box {
+            margin-top: 20px;
+        }
+
+        .comment-card {
+            background: #f0f4fa;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .pagination {
+            margin: 30px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .pagination a,
+        .pagination span {
+            background: white;
+            color: #0A66C2;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
+        }
+
+        .pagination .current {
+            background: #0A66C2;
+            color: white;
+        }
+
+        footer {
+            background:#0A66C2;
+            color:white;
+            padding:25px;
+            text-align:center;
+            margin-top:40px;
+        }
+
+        footer a {
+            color:white;
+            margin:0 10px;
+            text-decoration:none;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 20px;
+            }
+
+            .stats {
+                flex-direction: column;
+            }
+
+            .video-layout {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .video-actions-side {
+                width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                position: static;
+            }
+
+            .video-actions-side a,
+            .video-actions-side form {
+                width: 45%;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -666,25 +614,19 @@
 
                             <div class="video-main">
                                 <div class="video-player-wrap">
-                                    {% if video.display_thumbnail_url %}
-    <a href="/video/{{ video.id }}/" class="profile-thumbnail-link">
-        <img
-            loading="lazy"
-            class="profile-video-thumbnail"
-            src="{{ video.display_thumbnail_url }}"
-            alt="{{ video.title }}"
-        >
-
-        <div class="profile-play-overlay">
-            ▶
-        </div>
-    </a>
-{% else %}
-    <a href="/video/{{ video.id }}/" class="profile-thumbnail-link profile-fallback-thumbnail">
-        <div style="font-size:46px;">⚽</div>
-        <strong>Watch Video</strong>
-    </a>
-{% endif %}
+                                    <video
+                                        class="football-video preview-video"
+                                        controls
+                                        muted
+                                        preload="none" 
+                                        poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
+                                        controlsList="nodownload"
+                                        disablePictureInPicture
+                                        oncontextmenu="return false;"
+                                    >
+                                        <source src="{{ video.video_file.url }}">
+                                        Your browser does not support the video tag.
+                                    </video>
                                 </div>
                             </div>
 

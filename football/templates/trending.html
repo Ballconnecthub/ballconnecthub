@@ -307,25 +307,19 @@
                     {% endwith %}
 
                     <div class="video-player-wrap">
-                        {% if video.display_thumbnail_url %}
-    <a href="/video/{{ video.id }}/" class="profile-thumbnail-link">
-        <img
-            loading="lazy"
-            class="profile-video-thumbnail"
-            src="{{ video.display_thumbnail_url }}"
-            alt="{{ video.title }}"
-        >
-
-        <div class="profile-play-overlay">
-            ▶
-        </div>
-    </a>
-{% else %}
-    <a href="/video/{{ video.id }}/" class="profile-thumbnail-link profile-fallback-thumbnail">
-        <div style="font-size:46px;">⚽</div>
-        <strong>Watch Video</strong>
-    </a>
-{% endif %}
+                        <video
+                            class="football-video preview-video"
+                            controls
+                            muted
+                            preload="none"
+                            poster="{{ video.display_thumbnail_url }}"
+                            controlsList="nodownload"
+                            disablePictureInPicture
+                            oncontextmenu="return false;"
+                        >
+                            <source src="{{ video.video_file.url }}">
+                            Your browser does not support the video tag.
+                        </video>
                     </div>
 
                     <div class="video-info">

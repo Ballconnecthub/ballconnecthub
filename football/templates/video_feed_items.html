@@ -4,25 +4,23 @@
 
     <div class="mobile-video-wrap">
 
-        {% if video.display_thumbnail_url %}
-            <a href="/video/{{ video.id }}/" class="thumbnail-link">
-                <img
-                    loading="lazy"
-                    class="video-thumbnail"
-                    src="{{ video.display_thumbnail_url }}"
-                    alt="{{ video.title }}"
-                >
+        <div class="video-player-wrap">
 
-                <div class="play-overlay">
-                    ▶
-                </div>
-            </a>
-        {% else %}
-            <a href="/video/{{ video.id }}/" class="thumbnail-link fallback-thumbnail">
-                <div class="fallback-icon">⚽</div>
-                <div class="fallback-text">Watch Video</div>
-            </a>
-        {% endif %}
+    <video
+        class="football-video preview-video"
+        controls
+        muted
+        preload="metadata"
+        poster="{{ video.display_thumbnail_url }}"
+        controlsList="nodownload"
+        disablePictureInPicture
+        oncontextmenu="return false;"
+    >
+        <source src="{{ video.video_file.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+</div>
 
     </div>
 
