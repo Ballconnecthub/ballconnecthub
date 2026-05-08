@@ -312,7 +312,7 @@
                             controls
                             muted
                             preload="none"
-                            poster="{{ video.display_thumbnail_url }}"
+                           poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
                             controlsList="nodownload"
                             disablePictureInPicture
                             oncontextmenu="return false;"
