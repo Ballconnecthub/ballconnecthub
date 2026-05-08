@@ -224,20 +224,17 @@
         <div class="video-wrap">
         
              <video
-                class="football-video preview-video"
-                controls
-                muted
-                preload="none"
-                poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
-                controlsList="nodownload"
-                disablePictureInPicture
-                oncontextmenu="return false;"
-                        >
-                            <source src="{{ video.video_file.url }}">
-                            Your browser does not support the video tag.
-                        </video>
-            
-
+    class="football-video click-play-video"
+    controls
+    preload="metadata"
+    poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
+    controlsList="nodownload"
+    disablePictureInPicture
+    oncontextmenu="return false;"
+>
+    <source src="{{ video.video_file.url }}" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
         </div>
 
         <p class="description">
@@ -411,6 +408,25 @@
     </p>
 
 </footer>
+<script>
+document.addEventListener("click", function(event) {
 
+    const video = event.target.closest(".click-play-video");
+
+    if (video) {
+
+        document.querySelectorAll(".click-play-video").forEach(function(v) {
+
+            if (v !== video) {
+                v.pause();
+            }
+        });
+
+        video.play().catch(function(error) {
+            console.log(error);
+        });
+    }
+});
+</script>
 </body>
 </html>
