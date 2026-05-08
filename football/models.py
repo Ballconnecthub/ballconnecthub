@@ -126,6 +126,7 @@ class Profile(models.Model):
             models.Index(fields=["position"]),
             models.Index(fields=["club_or_academy"]),
         ]
+
     def __str__(self):
         return self.user.username
 
@@ -191,9 +192,7 @@ class Video(models.Model):
                     "/video/upload/",
                     "/video/upload/so_1,w_800,c_fit/"
                 )
-
                 thumbnail_url = thumbnail_url.rsplit(".", 1)[0] + ".jpg"
-
                 return thumbnail_url
 
         return ""

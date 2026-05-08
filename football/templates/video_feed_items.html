@@ -3,19 +3,27 @@
 <div class="feed-card mobile-feed-card">
 
     <div class="mobile-video-wrap">
-        <video
-            class="football-video preview-video mobile-feed-video"
-            controls
-            muted
-            preload="none"
-            poster="{{ video.display_thumbnail_url }}"
-            controlsList="nodownload"
-            disablePictureInPicture
-            oncontextmenu="return false;"
-        >
-            <source src="{{ video.video_file.url }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+
+        {% if video.display_thumbnail_url %}
+            <a href="/video/{{ video.id }}/" class="thumbnail-link">
+                <img
+                    loading="lazy"
+                    class="video-thumbnail"
+                    src="{{ video.display_thumbnail_url }}"
+                    alt="{{ video.title }}"
+                >
+
+                <div class="play-overlay">
+                    ▶
+                </div>
+            </a>
+        {% else %}
+            <a href="/video/{{ video.id }}/" class="thumbnail-link fallback-thumbnail">
+                <div class="fallback-icon">⚽</div>
+                <div class="fallback-text">Watch Video</div>
+            </a>
+        {% endif %}
+
     </div>
 
     <div class="mobile-feed-content">
