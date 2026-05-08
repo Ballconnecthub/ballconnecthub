@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-
         body{
             font-family:Arial, sans-serif;
             background:#f4f7fb;
@@ -51,7 +50,7 @@
             display:flex;
             justify-content:center;
             align-items:center;
-            background:#f9fafc;
+            background:white;
             border-radius:12px;
             overflow:hidden;
         }
@@ -62,7 +61,8 @@
             height:auto;
             max-height:650px;
             border-radius:12px;
-            background:black;
+            background:white;
+            cursor:pointer;
         }
 
         .video-title{
@@ -125,6 +125,8 @@
         .rec-thumb video{
             width:100%;
             border-radius:10px;
+            background:white;
+            cursor:pointer;
         }
 
         .rec-info a{
@@ -154,7 +156,6 @@
         }
 
         @media(max-width:950px){
-
             .container{
                 grid-template-columns:1fr;
             }
@@ -165,7 +166,6 @@
         }
 
         @media(max-width:600px){
-
             .navbar{
                 flex-direction:column;
                 gap:10px;
@@ -188,7 +188,6 @@
                 width:100%;
             }
         }
-
     </style>
 </head>
 
@@ -203,7 +202,6 @@
     <div>
         <a href="/">Home</a>
         <a href="/trending/">🔥 Trending</a>
-        <a href="/football-news/">Football News</a>
         <a href="/profile/{{ video.player.username }}/">
             Player Profile
         </a>
@@ -213,8 +211,6 @@
 
 <div class="container">
 
-    <!-- MAIN VIDEO -->
-
     <div class="main-video">
 
         <h2 class="video-title">
@@ -222,19 +218,22 @@
         </h2>
 
         <div class="video-wrap">
-        
-             <video
-    class="football-video click-play-video"
-    controls
-    preload="metadata"
-    poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
-    controlsList="nodownload"
-    disablePictureInPicture
-    oncontextmenu="return false;"
->
-    <source src="{{ video.video_file.url }}" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+
+            <video
+                id="mainVideo"
+                class="football-video hover-play-video"
+                controls
+                muted
+                preload="none"
+                poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
+                controlsList="nodownload"
+                disablePictureInPicture
+                oncontextmenu="return false;"
+            >
+                <source src="{{ video.video_file.url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
         </div>
 
         <p class="description">
@@ -243,29 +242,12 @@
 
         <div class="stats">
 
-            <div class="stat">
-                👀 {{ video.views }} Views
-            </div>
-
-            <div class="stat">
-                ❤️ {{ video.likes.count }} Likes
-            </div>
-
-            <div class="stat">
-                💬 {{ video.comments.count }} Comments
-            </div>
-
-            <div class="stat">
-                🔖 {{ video.saves.count }} Saves
-            </div>
-
-            <div class="stat">
-                📤 {{ video.shares }} Shares
-            </div>
-
-            <div class="stat">
-                🕵️ {{ video.scout_interests.count }} Scout Interest
-            </div>
+            <div class="stat">👀 {{ video.views }} Views</div>
+            <div class="stat">❤️ {{ video.likes.count }} Likes</div>
+            <div class="stat">💬 {{ video.comments.count }} Comments</div>
+            <div class="stat">🔖 {{ video.saves.count }} Saves</div>
+            <div class="stat">📤 {{ video.shares }} Shares</div>
+            <div class="stat">🕵️ {{ video.scout_interests.count }} Scout Interest</div>
 
         </div>
 
@@ -275,8 +257,8 @@
                 <strong>Player:</strong>
 
                 <a href="/profile/{{ video.player.username }}/">
-                   {{ video.player.username }}
-{% include "verified_badge.html" with profile_obj=video.player.profile %}
+                    {{ video.player.username }}
+                    {% include "verified_badge.html" with profile_obj=video.player.profile %}
                 </a>
             </p>
 
@@ -289,8 +271,6 @@
         </div>
 
     </div>
-
-    <!-- RECOMMENDED VIDEOS -->
 
     <div class="recommendations">
 
@@ -306,8 +286,17 @@
 
                     <div class="rec-thumb">
 
-                        <video muted>
-                            <source src="{{ rec.video_file.url }}">
+                        <video
+                            class="hover-play-video"
+                            muted
+                            controls
+                            preload="none"
+                            poster="{% if rec.thumbnail %}{{ rec.thumbnail.url }}{% endif %}"
+                            controlsList="nodownload"
+                            disablePictureInPicture
+                            oncontextmenu="return false;"
+                        >
+                            <source src="{{ rec.video_file.url }}" type="video/mp4">
                         </video>
 
                     </div>
@@ -320,17 +309,13 @@
 
                         <p style="margin:6px 0;">
                             {{ rec.player.username }}
-{% include "verified_badge.html" with profile_obj=rec.player.profile %}
+                            {% include "verified_badge.html" with profile_obj=rec.player.profile %}
                         </p>
 
                         <div class="rec-meta">
-
                             {{ rec.category|title }}
-
                             · 👀 {{ rec.views }}
-
                             · 🔥 {{ rec.ranking_score_value }}
-
                         </div>
 
                     </div>
@@ -354,15 +339,13 @@
 {% if recommended_videos %}
 
 <script>
-
     const mainVideo = document.getElementById("mainVideo");
 
-    mainVideo.addEventListener("ended", function () {
-
-        window.location.href = "/video/{{ recommended_videos.0.id }}/";
-
-    });
-
+    if (mainVideo) {
+        mainVideo.addEventListener("ended", function () {
+            window.location.href = "/video/{{ recommended_videos.0.id }}/";
+        });
+    }
 </script>
 
 {% endif %}
@@ -379,27 +362,11 @@
     </p>
 
     <div style="margin-top:15px;">
-
-        <a href="/impressum/">
-            Legal Notice
-        </a>
-
-        <a href="/privacy/">
-            Privacy Policy
-        </a>
-
-        <a href="/terms/">
-            Terms & Conditions
-        </a>
-
-        <a href="/copyright/">
-            Copyright
-        </a>
-
-        <a href="/cookies/">
-            Cookie Settings
-        </a>
-
+        <a href="/impressum/">Legal Notice</a>
+        <a href="/privacy/">Privacy Policy</a>
+        <a href="/terms/">Terms & Conditions</a>
+        <a href="/copyright/">Copyright</a>
+        <a href="/cookies/">Cookie Settings</a>
     </div>
 
     <p style="font-size:13px; margin-top:18px;">
@@ -408,25 +375,36 @@
     </p>
 
 </footer>
+
 <script>
-document.addEventListener("click", function(event) {
+document.addEventListener("mouseover", function(event) {
+    const video = event.target.closest(".hover-play-video");
 
-    const video = event.target.closest(".click-play-video");
+    if (!video) return;
 
-    if (video) {
+    document.querySelectorAll(".hover-play-video").forEach(function(otherVideo) {
+        if (otherVideo !== video) {
+            otherVideo.pause();
+            otherVideo.currentTime = 0;
+        }
+    });
 
-        document.querySelectorAll(".click-play-video").forEach(function(v) {
+    video.muted = true;
 
-            if (v !== video) {
-                v.pause();
-            }
-        });
+    video.play().catch(function(error) {
+        console.log("Hover autoplay blocked:", error);
+    });
+});
 
-        video.play().catch(function(error) {
-            console.log(error);
-        });
-    }
+document.addEventListener("mouseout", function(event) {
+    const video = event.target.closest(".hover-play-video");
+
+    if (!video) return;
+
+    video.pause();
+    video.currentTime = 0;
 });
 </script>
+
 </body>
 </html>
