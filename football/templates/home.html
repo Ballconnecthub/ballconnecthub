@@ -378,6 +378,30 @@
         © 2026 Ballconnecthub
     </p>
 </footer>
+<script>
+document.addEventListener("mouseover", function(event) {
 
+    const video = event.target.closest(".preview-video");
+
+    if (video) {
+
+        video.muted = true;
+
+        video.play().catch(function(error) {
+            console.log(error);
+        });
+    }
+});
+
+document.addEventListener("mouseout", function(event) {
+
+    const video = event.target.closest(".preview-video");
+
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
+});
+</script>
 </body>
 </html>
