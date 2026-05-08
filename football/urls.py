@@ -142,4 +142,8 @@ path(
     name="moderation_dashboard"
 ),
 
+path("impressum/", views.impressum_view, name="impressum"),
+path("privacy/", views.privacy_view, name="privacy"),
+path("copyright/", views.copyright_view, name="copyright"),
+path("cookies/", views.cookies_view, name="cookies"),
 ]

@@ -529,3 +529,18 @@ def report_video(request, video_id):
     return render(request, "report_video.html", {
         "video": video
     })
+
+def impressum_view(request):
+    return render(request, "impressum.html")
+
+
+def privacy_view(request):
+    return render(request, "privacy.html")
+
+
+def copyright_view(request):
+    return render(request, "copyright.html")
+
+
+def cookies_view(request):
+    return render(request, "cookies.html")
