@@ -222,16 +222,21 @@
         </h2>
 
         <div class="video-wrap">
-
-            <video
-                id="mainVideo"
-                class="football-video"
+        
+             <video
+                class="football-video preview-video"
                 controls
-                autoplay
-            >
-                <source src="{{ video.video_file.url }}">
-                Your browser does not support the video tag.
-            </video>
+                muted
+                preload="none"
+                poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
+                controlsList="nodownload"
+                disablePictureInPicture
+                oncontextmenu="return false;"
+                        >
+                            <source src="{{ video.video_file.url }}">
+                            Your browser does not support the video tag.
+                        </video>
+            
 
         </div>
 
