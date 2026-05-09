@@ -124,17 +124,7 @@ urlpatterns = [
         name="trending_videos"
     ),
 
-    path(
-        "football-news/",
-        views.football_news,
-        name="football_news"
-    ),
 
-    path(
-    "football-news/<slug:slug>/",
-    views.football_news_article,
-    name="football_news_article"
-),
 
 path(
     "moderation/",
