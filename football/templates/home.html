@@ -190,29 +190,11 @@
             text-align: center;
         }
 
-        .pagination {
-            margin: 30px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .pagination a,
-        .pagination span {
-            background: white;
-            color: #0A66C2;
-            padding: 10px 14px;
-            border-radius: 8px;
-            text-decoration: none;
+        #loading {
+            text-align: center;
+            padding: 25px;
+            color: #555;
             font-weight: bold;
-            box-shadow: 0px 4px 14px rgba(0,0,0,0.08);
-        }
-
-        .pagination .current {
-            background: #0A66C2;
-            color: white;
         }
 
         footer {
@@ -320,25 +302,13 @@
             {% include "video_feed_items.html" %}
         </div>
 
-        {% if videos.has_other_pages %}
-            <div class="pagination">
-
-                {% if videos.has_previous %}
-                    <a href="?page=1{% if query %}&q={{ query }}{% endif %}">First</a>
-                    <a href="?page={{ videos.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
-                {% endif %}
-
-                <span class="current">
-                    Page {{ videos.number }} of {{ videos.paginator.num_pages }}
-                </span>
-
-                {% if videos.has_next %}
-                    <a href="?page={{ videos.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
-                    <a href="?page={{ videos.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Last</a>
-                {% endif %}
-
-            </div>
-        {% endif %}
+        <div id="loading">
+            {% if has_next %}
+                Loading more videos...
+            {% else %}
+                No more videos
+            {% endif %}
+        </div>
 
     {% else %}
 
@@ -378,13 +348,47 @@
         © 2026 Ballconnecthub
     </p>
 </footer>
-<script>
-document.addEventListener("mouseover", function(event) {
 
+<script>
+let page = 2;
+let loading = false;
+let hasNext = "{{ has_next|yesno:'true,false' }}" === "true";
+const query = "{{ query|escapejs }}";
+
+window.addEventListener("scroll", function () {
+    if (loading || !hasNext) return;
+
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 500) {
+        loading = true;
+
+        fetch(`/?page=${page}&q=${encodeURIComponent(query)}`, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("video-feed").insertAdjacentHTML("beforeend", data.html);
+
+            hasNext = data.has_next;
+            page += 1;
+            loading = false;
+
+            if (!hasNext) {
+                document.getElementById("loading").innerText = "No more videos";
+            }
+        })
+        .catch(error => {
+            console.log(error);
+            loading = false;
+        });
+    }
+});
+
+document.addEventListener("mouseover", function(event) {
     const video = event.target.closest(".preview-video");
 
     if (video) {
-
         video.muted = true;
 
         video.play().catch(function(error) {
@@ -394,7 +398,6 @@ document.addEventListener("mouseover", function(event) {
 });
 
 document.addEventListener("mouseout", function(event) {
-
     const video = event.target.closest(".preview-video");
 
     if (video) {
@@ -403,5 +406,6 @@ document.addEventListener("mouseout", function(event) {
     }
 });
 </script>
+
 </body>
 </html>

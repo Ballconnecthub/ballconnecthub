@@ -31,8 +31,19 @@ def calculate_ranking_score(video):
 def home(request):
     query = request.GET.get("q", "")
 
-    videos = Video.objects.all().order_by("-created_at")
-    players = User.objects.filter(profile__account_type="player")[:20]
+    videos = Video.objects.select_related(
+        "player",
+        "player__profile"
+    ).prefetch_related(
+        "likes",
+        "comments",
+        "saves",
+        "scout_interests"
+    ).order_by("-created_at")
+
+    players = User.objects.filter(
+        profile__account_type="player"
+    ).select_related("profile")[:20]
 
     if query:
         videos = videos.filter(
@@ -47,7 +58,7 @@ def home(request):
 
         players = User.objects.filter(
             profile__account_type="player"
-        ).filter(
+        ).select_related("profile").filter(
             Q(username__icontains=query) |
             Q(profile__country__icontains=query) |
             Q(profile__position__icontains=query) |
@@ -57,7 +68,12 @@ def home(request):
     page_obj = paginate_queryset(request, videos, 6)
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
-        html = render_to_string("video_feed_items.html", {"videos": page_obj})
+        html = render_to_string(
+            "video_feed_items.html",
+            {"videos": page_obj},
+            request=request
+        )
+
         return JsonResponse({
             "html": html,
             "has_next": page_obj.has_next()
@@ -161,7 +177,13 @@ def profile_view(request, username):
     profile_user = get_object_or_404(User, username=username)
     profile = profile_user.profile
 
-    all_videos = profile_user.videos.all().order_by("-created_at")
+    all_videos = profile_user.videos.prefetch_related(
+        "likes",
+        "comments",
+        "saves",
+        "scout_interests"
+    ).order_by("-created_at")
+
     page_obj = paginate_queryset(request, all_videos, 6)
 
     for video in page_obj:
@@ -321,12 +343,23 @@ def watch_video(request, video_id):
     video.views += 1
     video.save(update_fields=["views"])
 
-    recommended_videos = Video.objects.exclude(id=video.id).filter(
+    recommended_videos = Video.objects.select_related(
+        "player",
+        "player__profile"
+    ).prefetch_related(
+        "likes",
+        "comments",
+        "saves",
+        "scout_interests"
+    ).exclude(id=video.id).filter(
         category=video.category
     ).order_by("-created_at")[:6]
 
     if not recommended_videos:
-        recommended_videos = Video.objects.exclude(id=video.id).order_by("-created_at")[:6]
+        recommended_videos = Video.objects.select_related(
+            "player",
+            "player__profile"
+        ).exclude(id=video.id).order_by("-created_at")[:6]
 
     for recommended in recommended_videos:
         recommended.ranking_score_value = calculate_ranking_score(recommended)
@@ -428,7 +461,16 @@ def scout_interest(request, video_id):
 
 
 def trending_videos(request):
-    videos = Video.objects.all().order_by("-views", "-created_at")
+    videos = Video.objects.select_related(
+        "player",
+        "player__profile"
+    ).prefetch_related(
+        "likes",
+        "comments",
+        "saves",
+        "scout_interests"
+    ).order_by("-views", "-created_at")
+
     page_obj = paginate_queryset(request, videos, 6)
 
     for video in page_obj:
@@ -529,6 +571,7 @@ def report_video(request, video_id):
     return render(request, "report_video.html", {
         "video": video
     })
+
 
 def impressum_view(request):
     return render(request, "impressum.html")
