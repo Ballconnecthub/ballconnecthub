@@ -607,6 +607,9 @@
                     <div class="video-box" id="video-{{ video.id }}">
 
                         <h4>{{ video.title }}</h4>
+                        <p>
+                        Uploaded {{ video.created_at|timesince }} ago
+                        </p>
                         <p>{{ video.description }}</p>
                         <p><strong>Category:</strong> {{ video.category|title }}</p>
 

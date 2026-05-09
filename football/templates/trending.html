@@ -328,8 +328,8 @@
                         </h2>
 
                         <p class="meta">
-                            Category: {{ video.category|title }}
-                        </p>
+    {{ video.category|title }} · {{ video.created_at|timesince }} ago
+</p>
 
                         {% if video.description %}
                             <p class="meta">

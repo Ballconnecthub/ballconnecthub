@@ -49,8 +49,8 @@
             <h3>{{ video.title }}</h3>
 
             <p class="meta">
-                {{ video.category|title }}
-            </p>
+    {{ video.category|title }} · {{ video.created_at|timesince }} ago
+</p>
 
             {% if video.description %}
                 <p>{{ video.description|truncatechars:110 }}</p>
