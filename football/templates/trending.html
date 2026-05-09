@@ -381,25 +381,7 @@
 
         </div>
 
-        {% if videos.has_other_pages %}
-            <div class="pagination">
-
-                {% if videos.has_previous %}
-                    <a href="?page=1">First</a>
-                    <a href="?page={{ videos.previous_page_number }}">Previous</a>
-                {% endif %}
-
-                <span class="current">
-                    Page {{ videos.number }} of {{ videos.paginator.num_pages }}
-                </span>
-
-                {% if videos.has_next %}
-                    <a href="?page={{ videos.next_page_number }}">Next</a>
-                    <a href="?page={{ videos.paginator.num_pages }}">Last</a>
-                {% endif %}
-
-            </div>
-        {% endif %}
+        
 
     {% else %}
 
@@ -497,6 +479,65 @@
         }
     });
 </script>
+<script>
 
+let currentPage = 2;
+let loading = false;
+let hasNext = true;
+
+window.addEventListener("scroll", function () {
+
+    if (loading || !hasNext) return;
+
+    if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 800) {
+
+        loading = true;
+
+        fetch(`/trending/?page=${currentPage}`, {
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            document.getElementById("video-feed").insertAdjacentHTML(
+                "beforeend",
+                data.html
+            );
+
+            hasNext = data.has_next;
+            currentPage++;
+
+            loading = false;
+        });
+    }
+});
+
+document.addEventListener("mouseover", function(event) {
+
+    const video = event.target.closest(".preview-video");
+
+    if (video) {
+
+        video.muted = true;
+
+        video.play().catch(function(error) {
+            console.log(error);
+        });
+    }
+});
+
+document.addEventListener("mouseout", function(event) {
+
+    const video = event.target.closest(".preview-video");
+
+    if (video) {
+        video.pause();
+        video.currentTime = 0;
+    }
+});
+
+</script>
 </body>
 </html>

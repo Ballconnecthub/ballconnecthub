@@ -461,78 +461,31 @@ def scout_interest(request, video_id):
 
 
 def trending_videos(request):
-    videos = Video.objects.select_related(
-        "player",
-        "player__profile"
-    ).prefetch_related(
-        "likes",
-        "comments",
-        "saves",
-        "scout_interests"
-    ).order_by("-views", "-created_at")
+
+    videos = Video.objects.all().order_by("-views", "-created_at")
 
     page_obj = paginate_queryset(request, videos, 6)
 
     for video in page_obj:
         video.ranking_score_value = calculate_ranking_score(video)
 
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+
+        html = render_to_string(
+            "video_feed_items.html",
+            {"videos": page_obj},
+            request=request
+        )
+
+        return JsonResponse({
+            "html": html,
+            "has_next": page_obj.has_next()
+        })
+
     return render(request, "trending.html", {
-        "videos": page_obj
+        "videos": page_obj,
+        "has_next": page_obj.has_next(),
     })
-
-
-def football_news(request):
-    return render(request, "football_news.html")
-
-
-def football_news_article(request, slug):
-    articles = {
-        "young-talents-attract-european-scouts": {
-            "title": "Young Talents Attract European Scouts",
-            "category": "Transfer News",
-            "content": """
-European clubs are increasingly using online platforms to discover young football players.
-
-Players who upload clear football videos, match highlights, training clips, and technical skill videos can become visible to scouts faster.
-
-Scouts often look for speed, discipline, ball control, tactical intelligence, decision-making, and confidence under pressure.
-
-Ballconnecthub helps young players present their football talent professionally to scouts, coaches, clubs, and academies.
-"""
-        },
-        "football-academies-focus-on-youth-development": {
-            "title": "Football Academies Focus On Youth Development",
-            "category": "Academy News",
-            "content": """
-Modern football academies focus on more than talent alone.
-
-They train young players in technique, fitness, discipline, teamwork, nutrition, communication, and football intelligence.
-
-Players who combine skill with discipline and good mentality often have better chances to progress in football.
-"""
-        },
-        "coaches-emphasize-tactical-intelligence": {
-            "title": "Coaches Emphasize Tactical Intelligence",
-            "category": "Match Analysis",
-            "content": """
-Football today requires smart decision-making.
-
-Coaches value positioning, pressing, passing timing, movement without the ball, and awareness during matches.
-
-A player who understands the game can stand out even when they are not scoring goals.
-"""
-        },
-    }
-
-    article = articles.get(slug)
-
-    if not article:
-        return redirect("football_news")
-
-    return render(request, "football_news_article.html", {
-        "article": article
-    })
-
 
 @login_required
 def moderation_dashboard(request):
