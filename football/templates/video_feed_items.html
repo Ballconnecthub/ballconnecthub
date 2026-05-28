@@ -11,12 +11,12 @@
         controls
         muted
         preload="metadata"
-       poster="{% if video.thumbnail %}{{ video.thumbnail.url }}{% endif %}"
+       poster="{% if video.thumbnail %}{{ video.optimized_thumbnail_url }}{% endif %}"
         controlsList="nodownload"
         disablePictureInPicture
         oncontextmenu="return false;"
     >
-        <source src="{{ video.video_file.url }}" type="video/mp4">
+        <source src="{{ video.compressed_video_url }}" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 

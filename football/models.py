@@ -150,8 +150,15 @@ class Video(models.Model):
     )
 
     title = models.CharField(max_length=150)
-    description = models.TextField(blank=True)
-    category = models.CharField(max_length=50, choices=SKILL_CATEGORIES)
+
+    description = models.TextField(
+        blank=True
+    )
+
+    category = models.CharField(
+        max_length=50,
+        choices=SKILL_CATEGORIES
+    )
 
     video_file = models.FileField(
         upload_to="football_videos/",
@@ -167,8 +174,12 @@ class Video(models.Model):
     )
 
     views = models.PositiveIntegerField(default=0)
+
     shares = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
 
     class Meta:
         indexes = [
@@ -202,9 +213,46 @@ class Video(models.Model):
     def total_scout_interests(self):
         return self.scout_interests.count()
 
+    # VIDEO COMPRESSION
+    @property
+    def compressed_video_url(self):
+
+        if self.video_file:
+
+            url = self.video_file.url
+
+            if "res.cloudinary.com" in url:
+
+                return url.replace(
+                    "/upload/",
+                    "/upload/q_auto:good,f_auto,vc_auto/"
+                )
+
+            return url
+
+        return ""
+
+    # THUMBNAIL OPTIMIZATION
+    @property
+    def optimized_thumbnail_url(self):
+
+        if self.thumbnail:
+
+            url = self.thumbnail.url
+
+            if "res.cloudinary.com" in url:
+
+                return url.replace(
+                    "/upload/",
+                    "/upload/q_auto,f_auto/"
+                )
+
+            return url
+
+        return ""
+
     def __str__(self):
         return self.title
-
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
