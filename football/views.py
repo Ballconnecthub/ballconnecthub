@@ -589,3 +589,6 @@ def copyright_view(request):
 
 def cookies_view(request):
     return render(request, "cookies.html")
+
+def contact_view(request):
+    return render(request, "contact.html")
