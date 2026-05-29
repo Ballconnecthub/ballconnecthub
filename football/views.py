@@ -6,6 +6,10 @@ from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.db.models import Q
+from django.core.mail import send_mail
+from django.conf import settings
+
+import uuid
 
 from .forms import RegisterForm, VideoUploadForm
 from .models import Profile, Video, Like, Comment, SavedVideo, ScoutInterest, ReportVideo
@@ -94,22 +98,59 @@ def register_view(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.email = form.cleaned_data["email"]
+            user.is_active = True
             user.save()
 
             profile, created = Profile.objects.get_or_create(user=user)
             profile.account_type = form.cleaned_data["account_type"]
+            profile.email_verified = False
+            profile.email_verification_token = str(uuid.uuid4())
             profile.save()
+
+            verification_link = request.build_absolute_uri(
+                f"/verify-email/{profile.email_verification_token}/"
+            )
+
+            send_mail(
+                "Verify your Ballconnecthub email",
+                (
+                    f"Hello {user.username},\n\n"
+                    f"Welcome to Ballconnecthub.\n\n"
+                    f"Please verify your email by clicking this link:\n"
+                    f"{verification_link}\n\n"
+                    f"Thank you,\n"
+                    f"Ballconnecthub Team"
+                ),
+                settings.DEFAULT_FROM_EMAIL,
+                [user.email],
+                fail_silently=False,
+            )
 
             login(request, user)
 
-            if profile.account_type == "player":
-                return redirect("profile_setup")
-
-            return redirect("home")
+            return redirect("email_verification_required")
     else:
         form = RegisterForm()
 
     return render(request, "register.html", {"form": form})
+
+
+def verify_email(request, token):
+    profile = get_object_or_404(
+        Profile,
+        email_verification_token=token
+    )
+
+    profile.email_verified = True
+    profile.email_verification_token = ""
+    profile.save()
+
+    return render(request, "email_verified.html")
+
+
+@login_required
+def email_verification_required(request):
+    return render(request, "email_verification_required.html")
 
 
 def login_view(request):
@@ -175,7 +216,7 @@ def profile_setup(request):
 
 def profile_view(request, username):
     profile_user = get_object_or_404(User, username=username)
-    profile = profile_user.profile
+    profile, created = Profile.objects.get_or_create(user=profile_user)
 
     all_videos = profile_user.videos.prefetch_related(
         "likes",
@@ -289,6 +330,11 @@ def follow_player(request, username):
 
 @login_required
 def upload_video(request):
+    profile = request.user.profile
+
+    if not request.user.is_staff and not profile.email_verified:
+        return redirect("email_verification_required")
+
     if request.method == "POST":
         form = VideoUploadForm(request.POST, request.FILES)
 
@@ -374,11 +420,15 @@ def watch_video(request, video_id):
 def delete_video(request, video_id):
     video = get_object_or_404(Video, id=video_id)
 
-    if video.player != request.user:
+    if video.player != request.user and not request.user.is_staff:
         return redirect("profile", username=video.player.username)
 
     if request.method == "POST":
         video.delete()
+
+        if request.user.is_staff:
+            return redirect("moderation_dashboard")
+
         return redirect("profile", username=request.user.username)
 
     return render(request, "delete_video.html", {
@@ -461,7 +511,6 @@ def scout_interest(request, video_id):
 
 
 def trending_videos(request):
-
     videos = Video.objects.all().order_by("-views", "-created_at")
 
     page_obj = paginate_queryset(request, videos, 6)
@@ -470,7 +519,6 @@ def trending_videos(request):
         video.ranking_score_value = calculate_ranking_score(video)
 
     if request.headers.get("x-requested-with") == "XMLHttpRequest":
-
         html = render_to_string(
             "video_feed_items.html",
             {"videos": page_obj},
@@ -486,6 +534,7 @@ def trending_videos(request):
         "videos": page_obj,
         "has_next": page_obj.has_next(),
     })
+
 
 @login_required
 def moderation_dashboard(request):

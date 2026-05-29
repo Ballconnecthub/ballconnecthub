@@ -70,6 +70,13 @@ class Profile(models.Model):
 
     country = models.CharField(max_length=100, blank=True)
 
+    email_verified = models.BooleanField(default=False)
+
+    email_verification_token = models.CharField(
+        max_length=100,
+        blank=True
+    )
+
     profile_photo = models.ImageField(
         upload_to="profile_photos/",
         blank=True,
@@ -77,10 +84,10 @@ class Profile(models.Model):
     )
 
     fans = models.ManyToManyField(
-    User,
-    related_name="followed_players",
-    blank=True
-)
+        User,
+        related_name="followed_players",
+        blank=True
+    )
 
     admin_role = models.CharField(
         max_length=150,
@@ -125,6 +132,7 @@ class Profile(models.Model):
             models.Index(fields=["country"]),
             models.Index(fields=["position"]),
             models.Index(fields=["club_or_academy"]),
+            models.Index(fields=["email_verified"]),
         ]
 
     def __str__(self):
@@ -150,15 +158,8 @@ class Video(models.Model):
     )
 
     title = models.CharField(max_length=150)
-
-    description = models.TextField(
-        blank=True
-    )
-
-    category = models.CharField(
-        max_length=50,
-        choices=SKILL_CATEGORIES
-    )
+    description = models.TextField(blank=True)
+    category = models.CharField(max_length=50, choices=SKILL_CATEGORIES)
 
     video_file = models.FileField(
         upload_to="football_videos/",
@@ -174,12 +175,8 @@ class Video(models.Model):
     )
 
     views = models.PositiveIntegerField(default=0)
-
     shares = models.PositiveIntegerField(default=0)
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         indexes = [
@@ -201,6 +198,36 @@ class Video(models.Model):
             (self.scout_interests.count() * 10)
         )
 
+    @property
+    def compressed_video_url(self):
+        if self.video_file:
+            url = self.video_file.url
+
+            if "res.cloudinary.com" in url:
+                return url.replace(
+                    "/upload/",
+                    "/upload/q_auto:good,f_auto,vc_auto/"
+                )
+
+            return url
+
+        return ""
+
+    @property
+    def optimized_thumbnail_url(self):
+        if self.thumbnail:
+            url = self.thumbnail.url
+
+            if "res.cloudinary.com" in url:
+                return url.replace(
+                    "/upload/",
+                    "/upload/q_auto,f_auto/"
+                )
+
+            return url
+
+        return ""
+
     def total_likes(self):
         return self.likes.count()
 
@@ -213,46 +240,9 @@ class Video(models.Model):
     def total_scout_interests(self):
         return self.scout_interests.count()
 
-    # VIDEO COMPRESSION
-    @property
-    def compressed_video_url(self):
-
-        if self.video_file:
-
-            url = self.video_file.url
-
-            if "res.cloudinary.com" in url:
-
-                return url.replace(
-                    "/upload/",
-                    "/upload/q_auto:good,f_auto,vc_auto/"
-                )
-
-            return url
-
-        return ""
-
-    # THUMBNAIL OPTIMIZATION
-    @property
-    def optimized_thumbnail_url(self):
-
-        if self.thumbnail:
-
-            url = self.thumbnail.url
-
-            if "res.cloudinary.com" in url:
-
-                return url.replace(
-                    "/upload/",
-                    "/upload/q_auto,f_auto/"
-                )
-
-            return url
-
-        return ""
-
     def __str__(self):
         return self.title
+
 
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -357,9 +347,7 @@ class ReportVideo(models.Model):
     )
 
     message = models.TextField(blank=True)
-
     resolved = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

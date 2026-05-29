@@ -136,4 +136,6 @@ path("impressum/", views.impressum_view, name="impressum"),
 path("privacy/", views.privacy_view, name="privacy"),
 path("copyright/", views.copyright_view, name="copyright"),
 path("cookies/", views.cookies_view, name="cookies"),
+path("verify-email/<str:token>/", views.verify_email, name="verify_email"),
+path("email-verification-required/", views.email_verification_required, name="email_verification_required"),
 ]
