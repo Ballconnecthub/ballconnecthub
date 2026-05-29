@@ -560,44 +560,65 @@
 
         </div>
 
-        <div class="section">
+        {% if user.is_authenticated and user != profile_user %}
 
-            {% if profile.account_type == "player" %}
-                <h3>Contact Player</h3>
-            {% elif profile.account_type == "scout" %}
-                <h3>Contact Scout</h3>
-            {% elif profile.account_type == "coach" %}
-                <h3>Contact Coach / Club</h3>
-            {% else %}
-                <h3>Contact User</h3>
-            {% endif %}
+<div class="section">
 
-            {% if profile_user.email %}
-                <a href="mailto:{{ profile_user.email }}">
-                    <button class="btn contact-btn" style="width:auto;">
-                        Contact {{ profile_user.username }}
-                    </button>
-                </a>
-            {% else %}
-                <a href="mailto:info@ballconnecthub.com">
-                    <button class="btn contact-btn" style="width:auto;">
-                        Contact Ballconnecthub
-                    </button>
-                </a>
-            {% endif %}
+    {% if profile.account_type == "player" %}
+        <h3>Contact Player Through Ballconnecthub</h3>
 
-            {% if user == profile_user %}
-                <br><br>
+    {% elif profile.account_type == "scout" %}
+        <h3>Contact Scout Through Ballconnecthub</h3>
 
-                <a href="/delete-account/">
-                    <button class="btn delete-btn" style="width:auto;">
-                        Delete My Account
-                    </button>
-                </a>
-            {% endif %}
+    {% elif profile.account_type == "coach" %}
+        <h3>Contact Club / Coach Through Ballconnecthub</h3>
 
-        </div>
+    {% else %}
+        <h3>Contact User Through Ballconnecthub</h3>
 
+    {% endif %}
+
+    <p>
+        For privacy and safety, users do not contact each other directly.
+    </p>
+
+    <p>
+        Contact Ballconnecthub and we will forward your request.
+    </p>
+
+    <p>
+        📧 <strong>info@ballconnecthub.com</strong>
+    </p>
+
+    <p>
+        💬 <strong>+49 176 41467687</strong>
+    </p>
+
+    <a href="/contact/">
+        <button class="btn contact-btn" style="width:auto;">
+            Contact Ballconnecthub
+        </button>
+    </a>
+
+</div>
+
+{% endif %}
+
+{% if user == profile_user %}
+
+<div class="section">
+
+    <h3>Account Settings</h3>
+
+    <a href="/delete-account/">
+        <button class="btn delete-btn" style="width:auto;">
+            Delete My Account
+        </button>
+    </a>
+
+</div>
+
+{% endif %}
         <div class="section">
             <h3>Football Videos</h3>
 
